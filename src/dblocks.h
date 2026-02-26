@@ -5,10 +5,9 @@
 
 #include "resstr.h"
 
-int readDirectoryBlocks(FILE *aResFile, DIRPOINTER * loDirectoryPointers);
+int readDirectoryBlocks(FILE *aResFile, DIRPOINTER *loDirectoryPointers);
 int getNumberOfDirectoryBlocks(DIRPOINTER *aDirectoryPointers);
-FILE* openAESOPResourceAndSetToFirstDirectoryBlock(char *aResName,
-		const char *aMode, struct RESGlobalHeader *aHeaderPointer);
+FILE *openAESOPResourceAndSetToFirstDirectoryBlock(char *aResName,
+												   const char *aMode, struct RESGlobalHeader *aHeaderPointer);
 
 #endif
-

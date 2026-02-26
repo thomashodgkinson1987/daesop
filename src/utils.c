@@ -9,12 +9,14 @@
 /*
  Allocate a string
  */
-char *makeString(const char *aString) {
+char *makeString(const char *aString)
+{
 	char *loResult = NULL;
-	if (aString == NULL) {
+	if (aString == NULL)
+	{
 		return (loResult);
 	}
-	loResult = (char *) malloc(strlen(aString) + 1);
+	loResult = (char *)malloc(strlen(aString) + 1);
 	strcpy(loResult, aString);
 	return (loResult);
 }
@@ -22,9 +24,10 @@ char *makeString(const char *aString) {
 /*
  Get the date
  */
-char *unpackDate(unsigned int aDate, char *aDateString) {
-	const char *months[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-			"Aug", "Sep", "Oct", "Nov", "Dec" };
+char *unpackDate(unsigned int aDate, char *aDateString)
+{
+	const char *months[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+							  "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 	sprintf(aDateString, "%s %d, %4d %02d:%02d:%02d",
 			months[((aDate >> 21) & 0x000f) - 1], (aDate >> 16) & 0x001f,
@@ -38,11 +41,10 @@ char *unpackDate(unsigned int aDate, char *aDateString) {
  Case insensitive comparison
  (warning: do not use for resource names - they are case sensitive))
  */
-int strcmpCS(const char *s1, const char *s2) {
+int strcmpCS(const char *s1, const char *s2)
+{
 	for (;
-			*s1 && *s2
-					&& (toupper((unsigned char) *s1)
-							== toupper((unsigned char) *s2)); ++s1, ++s2)
+		 *s1 && *s2 && (toupper((unsigned char)*s1) == toupper((unsigned char)*s2)); ++s1, ++s2)
 		;
 	return (*s1 - *s2);
 }
@@ -51,21 +53,27 @@ int strcmpCS(const char *s1, const char *s2) {
  Convert to upper case
  (warning: do not use for resource names - they are case sensitive))
  */
-void toUpperCase(char *aS) {
-	for (; *aS; ++aS) {
-		*aS = toupper((unsigned char) *aS);
+void toUpperCase(char *aS)
+{
+	for (; *aS; ++aS)
+	{
+		*aS = toupper((unsigned char)*aS);
 	}
 }
 
 /*
  Get the character representation for file dump
  */
-char getCharacterForDump(char aChar) {
-	int loCharNumber = (unsigned char) aChar;
-	if (loCharNumber < 32) {
+char getCharacterForDump(char aChar)
+{
+	int loCharNumber = (unsigned char)aChar;
+	if (loCharNumber < 32)
+	{
 		// instead of unprintable characters
 		return ('.');
-	} else {
+	}
+	else
+	{
 		return (aChar);
 	}
 }
@@ -73,26 +81,29 @@ char getCharacterForDump(char aChar) {
 /*
  Checks whether the one string ends with another string (case insensitive)
  */
-int stringEndsWith(char *aFullString, const char *aEndString) {
+int stringEndsWith(char *aFullString, const char *aEndString)
+{
 	int loFullStringLength;
 	int loEndStringLength;
 	int loResult = false;
 	char *loFullStringEndPointer;
 
-	if (aFullString == NULL || aEndString == NULL) {
+	if (aFullString == NULL || aEndString == NULL)
+	{
 		// at least one is null
 		printf("stringEndsWith(): at least one parameter is NULL!\n");
 		return (loResult);
 	}
 	loFullStringLength = strlen(aFullString);
 	loEndStringLength = strlen(aEndString);
-	if (loFullStringLength < loEndStringLength) {
+	if (loFullStringLength < loEndStringLength)
+	{
 		// the second string is longer
 		return (loResult);
 	}
-	loFullStringEndPointer = aFullString
-			+ (loFullStringLength - loEndStringLength);
-	if (strcmpCS(loFullStringEndPointer, aEndString) == 0) {
+	loFullStringEndPointer = aFullString + (loFullStringLength - loEndStringLength);
+	if (strcmpCS(loFullStringEndPointer, aEndString) == 0)
+	{
 		// ok, the ending agrees
 		loResult = true;
 	}
@@ -102,7 +113,8 @@ int stringEndsWith(char *aFullString, const char *aEndString) {
 /*
  Copy the file into a new file
  */
-int copyFile(FILE *aSourceFile, char *aNewFileName) {
+int copyFile(FILE *aSourceFile, char *aNewFileName)
+{
 	FILE *loNewFile;
 	unsigned int loReadSize;
 	char loBuffer[MAX_COPY_BUFFER];
@@ -110,15 +122,18 @@ int copyFile(FILE *aSourceFile, char *aNewFileName) {
 	// new file
 	printf("Opening the target file: %s\n", aNewFileName);
 	loNewFile = fopen(aNewFileName, "wb");
-	if (loNewFile == NULL) {
+	if (loNewFile == NULL)
+	{
 		printf("The file could not be opened: %s!\n", aNewFileName);
 		return (false);
 	}
 
 	// copy the aResFile file into aNewFile
 	fseek(aSourceFile, 0, SEEK_SET);
-	while ((loReadSize = fread(&loBuffer, 1, MAX_COPY_BUFFER, aSourceFile)) != 0) {
-		if (fwrite(loBuffer, 1, loReadSize, loNewFile) != loReadSize) {
+	while ((loReadSize = fread(&loBuffer, 1, MAX_COPY_BUFFER, aSourceFile)) != 0)
+	{
+		if (fwrite(loBuffer, 1, loReadSize, loNewFile) != loReadSize)
+		{
 			printf("Unable to write to the file: %s\n", aNewFileName);
 			fclose(loNewFile);
 			return (false);
@@ -128,6 +143,6 @@ int copyFile(FILE *aSourceFile, char *aNewFileName) {
 	// close the file after copying
 	fclose(loNewFile);
 	printf("Finished copying of the original into the file: %s\n",
-			aNewFileName);
+		   aNewFileName);
 	return (true);
 }

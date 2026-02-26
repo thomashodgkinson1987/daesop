@@ -6,26 +6,26 @@
 #include "resstr.h"
 #include "dict.h"
 
-#define NOTHING                             0
-#define GET_INFORMATION                     1
-#define GET_RESOURCES_INFORMATION           2
-#define GET_OFFSET_INFORMATION              3
-#define GET_RESOURCE_INFORMATION_BY_NAME    4
-#define GET_RESOURCE_INFORMATION_BY_NUMBER  5
-#define GET_RESOURCE_BY_NAME                6
-#define GET_RESOURCE_WITH_HEADER_BY_NAME    7
-#define GET_RESOURCE_BY_NUMBER              8
-#define GET_RESOURCE_WITH_HEADER_BY_NUMBER  9
-#define TEST_OLD_BITMAPS                    10
-#define REPLACE_BY_RESOURCE                 11
-#define REPLACE_BY_RESOURCE_WITH_HEADER     12
-#define CREATE_TBL_FILE                     13
-#define CONVERT_OLD_BITMAPS                 14
-#define CONVERT_OLD_BITMAPS_IGNORE_ERRORS   15
-#define CONVERT_OLD_FONTS                   16
-#define CONVERT_OLD_FONTS_IGNORE_ERRORS     17
-#define PATCH_EOB3_MENU                     18
-#define CONVERT_EOB3_TO_AESOP32             19
+#define NOTHING 0
+#define GET_INFORMATION 1
+#define GET_RESOURCES_INFORMATION 2
+#define GET_OFFSET_INFORMATION 3
+#define GET_RESOURCE_INFORMATION_BY_NAME 4
+#define GET_RESOURCE_INFORMATION_BY_NUMBER 5
+#define GET_RESOURCE_BY_NAME 6
+#define GET_RESOURCE_WITH_HEADER_BY_NAME 7
+#define GET_RESOURCE_BY_NUMBER 8
+#define GET_RESOURCE_WITH_HEADER_BY_NUMBER 9
+#define TEST_OLD_BITMAPS 10
+#define REPLACE_BY_RESOURCE 11
+#define REPLACE_BY_RESOURCE_WITH_HEADER 12
+#define CREATE_TBL_FILE 13
+#define CONVERT_OLD_BITMAPS 14
+#define CONVERT_OLD_BITMAPS_IGNORE_ERRORS 15
+#define CONVERT_OLD_FONTS 16
+#define CONVERT_OLD_FONTS_IGNORE_ERRORS 17
+#define PATCH_EOB3_MENU 18
+#define CONVERT_EOB3_TO_AESOP32 19
 
 #define DUMP_LINE_SIZE 16
 
@@ -37,45 +37,44 @@ void syntaxInformation(void);
 
 // Commands
 int getInformation(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		char *aOutputFilename);
+				   char *aOutputFilename);
 int getResource(FILE *aResFile, DIRPOINTER *aDirectoryPointers, int aFunction,
-		char *aResource, char *aOutputFilename);
+				char *aResource, char *aOutputFilename);
 void displayCodeResourceInformation(FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers, FILE *aOutputFile, int aResourceType,
-		char *aResourceName, DICTENTRYPOINTER* aResourceNameArray);
+									DIRPOINTER *aDirectoryPointers, FILE *aOutputFile, int aResourceType,
+									char *aResourceName, DICTENTRYPOINTER *aResourceNameArray);
 void displaySpecialAESOPResource(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		FILE *aOutputFile, int aResourceNumber);
+								 FILE *aOutputFile, int aResourceNumber);
 void displayHexadecimalDump(int aResourceNumber, FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers, FILE *aOutputFile);
+							DIRPOINTER *aDirectoryPointers, FILE *aOutputFile);
 void displayHexadecimalDumpOfMemoryBuffer(unsigned char *aBuffer, int aLength,
-		FILE *aOutputFile);
+										  FILE *aOutputFile);
 int getResourceInformation(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		int aFunction, char *aResource, char *aOutputFilename);
+						   int aFunction, char *aResource, char *aOutputFilename);
 void displayCodeResource(int aCodeResourceNumber, char *aCodeResourceName,
-		IMPORTENTRYPOINTER *aFullImportResourceDictionary,
-		int aImportResourceSize,
-		EXPORTENTRYPOINTER *aFullExportResourceDictionary,
-		int aExportResourceSize, FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		FILE *aOutputFile);
+						 IMPORTENTRYPOINTER *aFullImportResourceDictionary,
+						 int aImportResourceSize,
+						 EXPORTENTRYPOINTER *aFullExportResourceDictionary,
+						 int aExportResourceSize, FILE *aResFile, DIRPOINTER *aDirectoryPointers,
+						 FILE *aOutputFile);
 int getResourcesInformation(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		char *aOutputFilename);
+							char *aOutputFilename);
 int testOldBitmaps(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		char *aOutputFilename);
+				   char *aOutputFilename);
 int replaceResourceByResourceFromFile(FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers, char *aResourceNumberString,
-		char *aAddedResourceFileName, char *aNewFileName,
-		int aNewResourceHasHeader);
+									  DIRPOINTER *aDirectoryPointers, char *aResourceNumberString,
+									  char *aAddedResourceFileName, char *aNewFileName,
+									  int aNewResourceHasHeader);
 int getOffsetInformation(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		char *aOffsetString, char *aOutputFileName);
+						 char *aOffsetString, char *aOutputFileName);
 int createTblFile(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		char *aTblFileName);
+				  char *aTblFileName);
 int convertOldBitmaps(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		char *aNewFileName, int aIgnoreErrors);
+					  char *aNewFileName, int aIgnoreErrors);
 int convertOldFonts(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		char *aNewFileName, int aIgnoreErrors);
+					char *aNewFileName, int aIgnoreErrors);
 int patchEOB3Menu(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		char *aNewFileName);
+				  char *aNewFileName);
 int convertEOB3toAESOP32(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		char *aNewFileName);
+						 char *aNewFileName);
 #endif
-

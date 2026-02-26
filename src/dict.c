@@ -10,19 +10,19 @@
 #include "dict.h"
 
 int readDictionaryStringList(DICTENTRYPOINTER *aDictionaryArray,
-		int aMaxDictionaryEntries, int *aCurrentIndexInDictionary,
-		FILE *aResFile, unsigned int aStringListIndex);
+							 int aMaxDictionaryEntries, int *aCurrentIndexInDictionary,
+							 FILE *aResFile, unsigned int aStringListIndex);
 void storeIntoDictionaryArray(DICTENTRYPOINTER *aDictionaryArray,
-		int *aCurrentIndexInDictionary, char *aFirstString,
-		char *aSecondString);
+							  int *aCurrentIndexInDictionary, char *aFirstString,
+							  char *aSecondString);
 int compareAccordingToSecondNumber(void const *aFirstItem,
-		void const *aSecondItem);
+								   void const *aSecondItem);
 int compareAccordingToSecondString(void const *aFirstItem,
-		void const *aSecondItem);
+								   void const *aSecondItem);
 int compareAccordingToFirstString(void const *aFirstItem,
-		void const *aSecondItem);
+								  void const *aSecondItem);
 DICTENTRYPOINTER *readMessageNamesDictionary(FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers);
+											 DIRPOINTER *aDirectoryPointers);
 
 DICTENTRYPOINTER *myMessageNamesDictionary = NULL;
 DICTENTRYPOINTER *myResourceNamesDictionary = NULL;
@@ -30,13 +30,16 @@ DICTENTRYPOINTER *myResourceNamesDictionary = NULL;
 /*
  Gets resource number from number string
  */
-int getResourceNumberFromNumberString(char *aResource) {
+int getResourceNumberFromNumberString(char *aResource)
+{
 	int loExtractedResourceNumber = atoi(aResource);
-	if (loExtractedResourceNumber == 0 && strcmp(aResource, "0") != 0) {
+	if (loExtractedResourceNumber == 0 && strcmp(aResource, "0") != 0)
+	{
 		printf("Failure to convert the resource number: %s!\n", aResource);
 		return (-1);
 	}
-	if (loExtractedResourceNumber < 0) {
+	if (loExtractedResourceNumber < 0)
+	{
 		printf("Invalid resource number: %s!\n", aResource);
 		return (-1);
 	}
@@ -47,23 +50,25 @@ int getResourceNumberFromNumberString(char *aResource) {
  Gets the resource number from name string
  */
 int getResourceNumberFromNameString(char *aResource,
-		DICTENTRYPOINTER* aResourceNameArray) {
+									DICTENTRYPOINTER *aResourceNameArray)
+{
 	int i;
 	for (i = 0;
-			i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aResourceNameArray[i] != NULL;
-			i++) {
+		 i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aResourceNameArray[i] != NULL;
+		 i++)
+	{
 
 		// The resource names are case sentitive!
 		// In EOB 3 there are resources: "Holy symbol" and "holy symbol"
 		if (strcmp(aResource, aResourceNameArray[i]->first) == 0)
-//      if (strcmpCS(aResource, aResourceNameArray[i]->first) == 0)  // case insensitive
-				{
+		//      if (strcmpCS(aResource, aResourceNameArray[i]->first) == 0)  // case insensitive
+		{
 			char *loResourceNumberString = aResourceNameArray[i]->second;
 			int loResourceNumber = atoi(loResourceNumberString);
-			if (loResourceNumber == 0
-					&& strcmp(loResourceNumberString, "0") != 0) {
+			if (loResourceNumber == 0 && strcmp(loResourceNumberString, "0") != 0)
+			{
 				printf("Failure to convert the resource number: %s!\n",
-						loResourceNumberString);
+					   loResourceNumberString);
 				return (-1);
 			}
 			return (loResourceNumber);
@@ -76,7 +81,8 @@ int getResourceNumberFromNameString(char *aResource,
  Read the dictionary resource (one of special AESOP resources 0..4 or import/export resources)
  */
 DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
-		FILE *aResFile, DIRPOINTER *aDirectoryPointers, int *aResourceSize) {
+									FILE *aResFile, DIRPOINTER *aDirectoryPointers, int *aResourceSize)
+{
 	struct RESEntryHeader *loDictionaryResourceHeader;
 	long loDictionaryStart;
 	unsigned short loDictionaryStringListsNumber;
@@ -88,9 +94,10 @@ DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
 	int i;
 	int loAllocatedDictionaryEntries;
 
-	if (aMaxDictionaryEntries > MAX_NUMBER_OF_DICTIONARY_ITEMS) {
+	if (aMaxDictionaryEntries > MAX_NUMBER_OF_DICTIONARY_ITEMS)
+	{
 		printf("The maximum allowed length of the dictionary is: %d!\n",
-				MAX_NUMBER_OF_DICTIONARY_ITEMS);
+			   MAX_NUMBER_OF_DICTIONARY_ITEMS);
 		return (NULL);
 	}
 
@@ -98,101 +105,107 @@ DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
 	loAllocatedDictionaryEntries = aMaxDictionaryEntries + 1;
 
 	// allocate space for the dictionary array
-	loDictionaryArraySizeInBytes = loAllocatedDictionaryEntries
-			* sizeof(struct INTERNAL_DICTIONARY_ENTRY);
-	loDictionaryArray = (DICTENTRYPOINTER *) malloc(
-			loDictionaryArraySizeInBytes);
-	if (loDictionaryArray == NULL) {
+	loDictionaryArraySizeInBytes = loAllocatedDictionaryEntries * sizeof(struct INTERNAL_DICTIONARY_ENTRY);
+	loDictionaryArray = (DICTENTRYPOINTER *)malloc(
+		loDictionaryArraySizeInBytes);
+	if (loDictionaryArray == NULL)
+	{
 		printf(
-				"The allocation of the dictionary array with the size %d failed!\n",
-				loAllocatedDictionaryEntries);
+			"The allocation of the dictionary array with the size %d failed!\n",
+			loAllocatedDictionaryEntries);
 		return (NULL);
 	}
 
 	// set everything to NULL
-	for (i = 0; i < loAllocatedDictionaryEntries; i++) {
+	for (i = 0; i < loAllocatedDictionaryEntries; i++)
+	{
 		loDictionaryArray[i] = NULL;
 	}
 
 	// now read the resource header
 	loDictionaryResourceHeader = getResourceEntryHeader(aResource, aResFile,
-			aDirectoryPointers);
-	if (loDictionaryResourceHeader == NULL) {
+														aDirectoryPointers);
+	if (loDictionaryResourceHeader == NULL)
+	{
 		printf(
-				"Failure while reading dictionary header for the dictionary resource: %d!\n",
-				aResource);
+			"Failure while reading dictionary header for the dictionary resource: %d!\n",
+			aResource);
 		free(loDictionaryArray);
 		return (NULL);
 	}
 
 	// return the resource length if required
-	if (aResourceSize != NULL) {
+	if (aResourceSize != NULL)
+	{
 		*aResourceSize = loDictionaryResourceHeader->data_size;
 	}
 
-	loDictionaryStart = getResourceEntryIndex(aResource, aDirectoryPointers)
-			+ sizeof(struct RESEntryHeader);
+	loDictionaryStart = getResourceEntryIndex(aResource, aDirectoryPointers) + sizeof(struct RESEntryHeader);
 	// now read the dictionary entries
-	if (fseek(aResFile, loDictionaryStart, SEEK_SET) != 0) {
+	if (fseek(aResFile, loDictionaryStart, SEEK_SET) != 0)
+	{
 		printf(
-				"Failure to set the file position %ld when reading the dictionary resource %d!\n",
-				loDictionaryStart, aResource);
+			"Failure to set the file position %ld when reading the dictionary resource %d!\n",
+			loDictionaryStart, aResource);
 		free(loDictionaryArray);
 		return (NULL);
 	}
 
 	loReadSize = fread(&loDictionaryStringListsNumber, 1,
-			sizeof(unsigned short), aResFile);
-	if (loReadSize != sizeof(unsigned short)
-			|| loDictionaryStringListsNumber > 2048) // 512 is the standard in AESOP
-					{
+					   sizeof(unsigned short), aResFile);
+	if (loReadSize != sizeof(unsigned short) || loDictionaryStringListsNumber > 2048) // 512 is the standard in AESOP
+	{
 		printf(
-				"Failure to read the number of dictionary string lists from the dictionary!\n");
+			"Failure to read the number of dictionary string lists from the dictionary!\n");
 		free(loDictionaryArray);
 		return (NULL);
 	}
 
-	//printf("The number of string lists: %d\n", (int) loDictionaryStringListsNumber);
+	// printf("The number of string lists: %d\n", (int) loDictionaryStringListsNumber);
 
 	// now read the indexes of string lists
 	loCurrentIndexInDictionary = 0;
-	for (i = 0; i < loDictionaryStringListsNumber; i++) {
+	for (i = 0; i < loDictionaryStringListsNumber; i++)
+	{
 		// DICTIONARY_ENTRY + sizeof(number_of_string_lists) + i * sizeof(list_index_entry)
 		if (fseek(aResFile,
-				loDictionaryStart + sizeof(unsigned short)
-						+ i * sizeof(unsigned int), SEEK_SET) != 0) {
+				  loDictionaryStart + sizeof(unsigned short) + i * sizeof(unsigned int), SEEK_SET) != 0)
+		{
 			printf(
-					"Failure to set the file position %ld when reading the dictionary resource %d!\n",
-					loDictionaryStart, aResource);
+				"Failure to set the file position %ld when reading the dictionary resource %d!\n",
+				loDictionaryStart, aResource);
 			return (NULL);
 		}
 
-		//printf("seek: %d\n", loDictionaryStart + sizeof(unsigned short) + i * sizeof(unsigned int));
+		// printf("seek: %d\n", loDictionaryStart + sizeof(unsigned short) + i * sizeof(unsigned int));
 
 		loReadSize = fread(&loStringListIndex, 1, sizeof(unsigned int),
-				aResFile);
-		if (loReadSize != sizeof(unsigned int)) {
+						   aResFile);
+		if (loReadSize != sizeof(unsigned int))
+		{
 			printf(
-					"Failure to read a string list index from the dictionary resource %d!\n",
-					aResource);
+				"Failure to read a string list index from the dictionary resource %d!\n",
+				aResource);
 			return (NULL);
 		}
 
-		if (loStringListIndex != 0) {
+		if (loStringListIndex != 0)
+		{
 			// not empty
 			loStringListIndex += loDictionaryStart; // add the start of the index table to get the real offset
-			//printf("loStringListIndex: %u\n",loStringListIndex);
+			// printf("loStringListIndex: %u\n",loStringListIndex);
 			if (readDictionaryStringList(loDictionaryArray,
-					aMaxDictionaryEntries, &loCurrentIndexInDictionary,
-					aResFile, loStringListIndex) != true) {
+										 aMaxDictionaryEntries, &loCurrentIndexInDictionary,
+										 aResFile, loStringListIndex) != true)
+			{
 				// something failed
 				printf("Error while reading dictionary resource: %d\n",
-						aResource);
+					   aResource);
 				return (NULL);
 			}
 		}
 	}
-	//exit(1);
+	// exit(1);
 	return (loDictionaryArray);
 }
 
@@ -200,55 +213,65 @@ DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
  Read the list of strings in dictionary
  */
 int readDictionaryStringList(DICTENTRYPOINTER *aDictionaryArray,
-		int aMaxDictionaryEntries, int *aCurrentIndexInDictionary,
-		FILE *aResFile, unsigned int aStringListIndex) {
+							 int aMaxDictionaryEntries, int *aCurrentIndexInDictionary,
+							 FILE *aResFile, unsigned int aStringListIndex)
+{
 	unsigned short loStringLength;
 	char loReadString[256];
 	char loPreviousString[256];
 	int loReadSize;
 	int loCounter = 0;
 
-	if (fseek(aResFile, aStringListIndex, SEEK_SET) != 0) {
+	if (fseek(aResFile, aStringListIndex, SEEK_SET) != 0)
+	{
 		printf(
-				"Failure to set the file position %u when reading a dictionary string list!\n",
-				aStringListIndex);
+			"Failure to set the file position %u when reading a dictionary string list!\n",
+			aStringListIndex);
 		return (false);
 	}
 
-	//printf("index: %u\n",aStringListIndex);
+	// printf("index: %u\n",aStringListIndex);
 
-	for (;;) {
+	for (;;)
+	{
 		loReadSize = fread(&loStringLength, 1, sizeof(unsigned short),
-				aResFile);
-		if (loReadSize != sizeof(unsigned short)) {
+						   aResFile);
+		if (loReadSize != sizeof(unsigned short))
+		{
 			printf("Failure to read the string length from the dictionary!\n");
 			return (false);
 		}
-		if (loStringLength == 0) {
+		if (loStringLength == 0)
+		{
 			// end of the string list
 			break;
 		}
-		//printf("string length: %u\n",loStringLength);
+		// printf("string length: %u\n",loStringLength);
 
 		loReadSize = fread(loReadString, 1, loStringLength, aResFile);
-		if (loReadSize != loStringLength) {
+		if (loReadSize != loStringLength)
+		{
 			printf("Failure to read the string from the dictionary!\n");
 			return (false);
 		}
 		loReadString[loStringLength] = '\0';
-		//printf("%s\n", loReadString);
+		// printf("%s\n", loReadString);
 		loCounter++;
-		if (loCounter % 2 == 0) {
-			if (aMaxDictionaryEntries == (*aCurrentIndexInDictionary)) {
+		if (loCounter % 2 == 0)
+		{
+			if (aMaxDictionaryEntries == (*aCurrentIndexInDictionary))
+			{
 				printf(
-						"The max number of the entries in this dictionary is %d!\n",
-						aMaxDictionaryEntries);
+					"The max number of the entries in this dictionary is %d!\n",
+					aMaxDictionaryEntries);
 				return (false);
 			}
 			storeIntoDictionaryArray(aDictionaryArray,
-					aCurrentIndexInDictionary, loPreviousString, loReadString);
-			//printf("%s - %s\n", loReadString, loPreviousString);
-		} else {
+									 aCurrentIndexInDictionary, loPreviousString, loReadString);
+			// printf("%s - %s\n", loReadString, loPreviousString);
+		}
+		else
+		{
 			// store the string for the future
 			strcpy(loPreviousString, loReadString);
 		}
@@ -261,14 +284,15 @@ int readDictionaryStringList(DICTENTRYPOINTER *aDictionaryArray,
  Stores data into dictionary
  */
 void storeIntoDictionaryArray(DICTENTRYPOINTER *aDictionaryArray,
-		int *aCurrentIndexInDictionary, char *aFirstString,
-		char *aSecondString) {
-	aDictionaryArray[*aCurrentIndexInDictionary] = (DICTENTRYPOINTER) malloc(
-			sizeof(struct INTERNAL_DICTIONARY_ENTRY));
+							  int *aCurrentIndexInDictionary, char *aFirstString,
+							  char *aSecondString)
+{
+	aDictionaryArray[*aCurrentIndexInDictionary] = (DICTENTRYPOINTER)malloc(
+		sizeof(struct INTERNAL_DICTIONARY_ENTRY));
 	aDictionaryArray[*aCurrentIndexInDictionary]->first = makeString(
-			aFirstString);
+		aFirstString);
 	aDictionaryArray[*aCurrentIndexInDictionary]->second = makeString(
-			aSecondString);
+		aSecondString);
 	(*aCurrentIndexInDictionary)++;
 }
 
@@ -276,22 +300,25 @@ void storeIntoDictionaryArray(DICTENTRYPOINTER *aDictionaryArray,
  Used by qsort for comparing dictionary items
  */
 int compareAccordingToSecondNumber(void const *aFirstItem,
-		void const *aSecondItem) {
-	DICTENTRYPOINTER loFirstEntry = *(DICTENTRYPOINTER *) aFirstItem;
-	DICTENTRYPOINTER loSecondEntry = *(DICTENTRYPOINTER *) aSecondItem;
+								   void const *aSecondItem)
+{
+	DICTENTRYPOINTER loFirstEntry = *(DICTENTRYPOINTER *)aFirstItem;
+	DICTENTRYPOINTER loSecondEntry = *(DICTENTRYPOINTER *)aSecondItem;
 
 	int loTemp;
 	int aFirstNumber = atoi(loFirstEntry->second);
 	int aSecondNumber = atoi(loSecondEntry->second);
-	if (aFirstNumber == 0 && strcmp(loFirstEntry->second, "0") != 0) {
+	if (aFirstNumber == 0 && strcmp(loFirstEntry->second, "0") != 0)
+	{
 		printf(
-				"compareAccordingToSecondNumber: loFirstEntry->second is not a number for the loFirstEntry->first: %s!\n",
-				loFirstEntry->first);
+			"compareAccordingToSecondNumber: loFirstEntry->second is not a number for the loFirstEntry->first: %s!\n",
+			loFirstEntry->first);
 	}
-	if (aSecondNumber == 0 && strcmp(loSecondEntry->second, "0") != 0) {
+	if (aSecondNumber == 0 && strcmp(loSecondEntry->second, "0") != 0)
+	{
 		printf(
-				"compareAccordingToSecondNumber: loSecondEntry->second is not a number for the loSecondEntry->first: %s!\n",
-				loSecondEntry->first);
+			"compareAccordingToSecondNumber: loSecondEntry->second is not a number for the loSecondEntry->first: %s!\n",
+			loSecondEntry->first);
 	}
 
 	loTemp = aFirstNumber - aSecondNumber;
@@ -307,9 +334,10 @@ int compareAccordingToSecondNumber(void const *aFirstItem,
  Used by qsort for comparing dictionary items
  */
 int compareAccordingToSecondString(void const *aFirstItem,
-		void const *aSecondItem) {
-	DICTENTRYPOINTER loFirstEntry = *(DICTENTRYPOINTER *) aFirstItem;
-	DICTENTRYPOINTER loSecondEntry = *(DICTENTRYPOINTER *) aSecondItem;
+								   void const *aSecondItem)
+{
+	DICTENTRYPOINTER loFirstEntry = *(DICTENTRYPOINTER *)aFirstItem;
+	DICTENTRYPOINTER loSecondEntry = *(DICTENTRYPOINTER *)aSecondItem;
 
 	return (strcmp(loFirstEntry->second, loSecondEntry->second));
 }
@@ -318,9 +346,10 @@ int compareAccordingToSecondString(void const *aFirstItem,
  Used by qsort for comparing dictionary items
  */
 int compareAccordingToFirstString(void const *aFirstItem,
-		void const *aSecondItem) {
-	DICTENTRYPOINTER loFirstEntry = *(DICTENTRYPOINTER *) aFirstItem;
-	DICTENTRYPOINTER loSecondEntry = *(DICTENTRYPOINTER *) aSecondItem;
+								  void const *aSecondItem)
+{
+	DICTENTRYPOINTER loFirstEntry = *(DICTENTRYPOINTER *)aFirstItem;
+	DICTENTRYPOINTER loSecondEntry = *(DICTENTRYPOINTER *)aSecondItem;
 
 	return (strcmp(loFirstEntry->first, loSecondEntry->first));
 }
@@ -328,11 +357,14 @@ int compareAccordingToFirstString(void const *aFirstItem,
 /*
  Gets the numer of items in the dictionary
  */
-int getNumberOfItems(DICTENTRYPOINTER *aArray) {
+int getNumberOfItems(DICTENTRYPOINTER *aArray)
+{
 	int loItems = 0;
-	while (aArray[loItems] != NULL) {
+	while (aArray[loItems] != NULL)
+	{
 		loItems++;
-		if (loItems > MAX_NUMBER_OF_DICTIONARY_ITEMS) {
+		if (loItems > MAX_NUMBER_OF_DICTIONARY_ITEMS)
+		{
 			// this is suspicious, probably an error
 			return (-1);
 		}
@@ -343,57 +375,66 @@ int getNumberOfItems(DICTENTRYPOINTER *aArray) {
 /*
  Sorts dictionary according to the second item interpreted as a number
  */
-int sortDictionaryAccordingToSecondNumber(DICTENTRYPOINTER *aArray) {
+int sortDictionaryAccordingToSecondNumber(DICTENTRYPOINTER *aArray)
+{
 	int loItems;
-	if (aArray == NULL) {
+	if (aArray == NULL)
+	{
 		printf("The dictionary array is NULL!\n");
 		return (false);
 	}
 	loItems = getNumberOfItems(aArray);
-	if (loItems == -1) {
+	if (loItems == -1)
+	{
 		printf("Unable to determine the number of items when sorting!");
 		return (false);
 	}
 	qsort(aArray, loItems, sizeof(DICTENTRYPOINTER),
-			compareAccordingToSecondNumber);
+		  compareAccordingToSecondNumber);
 	return (true);
 }
 
 /*
  Sorts dictionary according to the second item
  */
-int sortDictionaryAccordingToSecondString(DICTENTRYPOINTER *aArray) {
+int sortDictionaryAccordingToSecondString(DICTENTRYPOINTER *aArray)
+{
 	int loItems;
-	if (aArray == NULL) {
+	if (aArray == NULL)
+	{
 		printf("The dictionary array is NULL!\n");
 		return (false);
 	}
 	loItems = getNumberOfItems(aArray);
-	if (loItems == -1) {
+	if (loItems == -1)
+	{
 		printf("Unable to determine the number of items when sorting!");
 		return (false);
 	}
 	qsort(aArray, loItems, sizeof(DICTENTRYPOINTER),
-			compareAccordingToSecondString);
+		  compareAccordingToSecondString);
 	return (true);
 }
 
 /*
  Sorts dictionary according to the first item
  */
-int sortDictionaryAccordingToFirstString(DICTENTRYPOINTER *aArray) {
+int sortDictionaryAccordingToFirstString(DICTENTRYPOINTER *aArray)
+{
 	int loItems;
-	if (aArray == NULL) {
+	if (aArray == NULL)
+	{
 		printf("The dictionary array is NULL!\n");
 		return (false);
 	}
 	loItems = getNumberOfItems(aArray);
-	if (loItems == -1) {
+	if (loItems == -1)
+	{
 		printf("Unable to determine the number of items when sorting!");
 		return (false);
 	}
 	qsort(aArray, loItems, sizeof(DICTENTRYPOINTER),
-			compareAccordingToFirstString);
+		  compareAccordingToFirstString);
 	return (true);
 }
 
@@ -401,50 +442,67 @@ int sortDictionaryAccordingToFirstString(DICTENTRYPOINTER *aArray) {
  Display the content of the dictionary
  */
 void displayDictionary(char *aText, char *aHeader, char *aFormat,
-		FILE *aOutputFile, DICTENTRYPOINTER *aDictionary,
-		int aSecondIsDecimalNumber) {
+					   FILE *aOutputFile, DICTENTRYPOINTER *aDictionary,
+					   int aSecondIsDecimalNumber)
+{
 	int i;
 	char loFormat[256];
 
-	if (aText != NULL) {
+	if (aText != NULL)
+	{
 		fprintf(aOutputFile, "%s\n", aText);
 	}
-	if (aHeader != NULL) {
+	if (aHeader != NULL)
+	{
 		fprintf(aOutputFile, "%s\n", aHeader);
 	}
 
-	if (aDictionary == NULL) {
+	if (aDictionary == NULL)
+	{
 		fprintf(aOutputFile, "The dictionary pointer is NULL!\n");
 		return;
 	}
 
-	if (aFormat != NULL) {
+	if (aFormat != NULL)
+	{
 		strcpy(loFormat, aFormat);
-	} else {
+	}
+	else
+	{
 		strcpy(loFormat, "%30s     %20s");
 	}
 	strcat(loFormat, "\n");
 
 	for (i = 0; i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aDictionary[i] != NULL;
-			i++) {
+		 i++)
+	{
 		char loTmp[256];
-		if (aSecondIsDecimalNumber == true) {
-			if (strchr(aDictionary[i]->second, ',') != NULL) {
+		if (aSecondIsDecimalNumber == true)
+		{
+			if (strchr(aDictionary[i]->second, ',') != NULL)
+			{
 				// not a number
 				strcpy(loTmp, aDictionary[i]->second);
-			} else {
+			}
+			else
+			{
 				// probably a number
 				int loNum = atoi(aDictionary[i]->second);
-				if (loNum == 0 && strcmp(aDictionary[i]->second, "0") != 0) {
+				if (loNum == 0 && strcmp(aDictionary[i]->second, "0") != 0)
+				{
 					// not a number
 					strcpy(loTmp, aDictionary[i]->second);
-				} else {
+				}
+				else
+				{
 					// number
 					sprintf(loTmp, "%4s  (%04x)", aDictionary[i]->second,
 							loNum);
 				}
 			}
-		} else {
+		}
+		else
+		{
 			strcpy(loTmp, aDictionary[i]->second);
 		}
 		fprintf(aOutputFile, loFormat, aDictionary[i]->first, loTmp);
@@ -455,30 +513,35 @@ void displayDictionary(char *aText, char *aHeader, char *aFormat,
 /*
  Get the resource name for the specified resource number
  */
-char *getResourceName(char *aResult, int aResourceNumber) {
+char *getResourceName(char *aResult, int aResourceNumber)
+{
 	int i;
 	int loNumberOfItems;
-	if (myResourceNamesDictionary == NULL) {
+	if (myResourceNamesDictionary == NULL)
+	{
 		printf("The resource names dictionary was not initialized yet!\n");
 		return (NULL);
 	}
 	loNumberOfItems = getNumberOfItems(myResourceNamesDictionary);
-	for (i = 0; i < loNumberOfItems; i++) {
+	for (i = 0; i < loNumberOfItems; i++)
+	{
 		char *loNumberString = myResourceNamesDictionary[i]->second;
 		int loNumber = atoi(loNumberString);
-		if (loNumber == 0 && strcmp(loNumberString, "0") != 0) {
+		if (loNumber == 0 && strcmp(loNumberString, "0") != 0)
+		{
 			printf("Failure to convert the resource number: %s!\n",
-					loNumberString);
+				   loNumberString);
 			return (NULL);
 		}
-		if (loNumber == aResourceNumber) {
+		if (loNumber == aResourceNumber)
+		{
 			// result
 			strcpy(aResult, myResourceNamesDictionary[i]->first);
 			return (aResult);
 		}
 	}
 	printf("The resource name was not found for the resource number %d!\n",
-			aResourceNumber);
+		   aResourceNumber);
 	return (NULL);
 }
 
@@ -486,12 +549,14 @@ char *getResourceName(char *aResult, int aResourceNumber) {
  Get the table with the names of resources
  */
 DICTENTRYPOINTER *getResourceNameArray(FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers) {
+									   DIRPOINTER *aDirectoryPointers)
+{
 	int loMaxResourceEntries;
 	DICTENTRYPOINTER *loResult;
 	int loBehindTheEnd;
 
-	if (myResourceNamesDictionary != NULL) {
+	if (myResourceNamesDictionary != NULL)
+	{
 		// it was already read before
 		return (myResourceNamesDictionary);
 	}
@@ -502,25 +567,26 @@ DICTENTRYPOINTER *getResourceNameArray(FILE *aResFile,
 
 	// there should be space for special tables (they are also in directory), adding of NUMBER_OF_SPECIAL_TABLES in not needed
 	loResult = readTheDictionary(0,
-			loMaxResourceEntries + NUMBER_OF_SPECIAL_TABLES, aResFile,
-			aDirectoryPointers, NULL);
-	if (loResult == NULL) {
+								 loMaxResourceEntries + NUMBER_OF_SPECIAL_TABLES, aResFile,
+								 aDirectoryPointers, NULL);
+	if (loResult == NULL)
+	{
 		printf("The attemp to read the resource name files failed!\n");
 	}
 
 	// add info about 5 special tables
 	loBehindTheEnd = getNumberOfItems(loResult);
 	storeIntoDictionaryArray(loResult, &loBehindTheEnd,
-			makeString("Special table 0: Resource names"), makeString("0"));
+							 makeString("Special table 0: Resource names"), makeString("0"));
 	storeIntoDictionaryArray(loResult, &loBehindTheEnd,
-			makeString("Special table 1 "), makeString("1"));
+							 makeString("Special table 1 "), makeString("1"));
 	storeIntoDictionaryArray(loResult, &loBehindTheEnd,
-			makeString("Special table 2 "), makeString("2"));
+							 makeString("Special table 2 "), makeString("2"));
 	storeIntoDictionaryArray(loResult, &loBehindTheEnd,
-			makeString("Special table 3: Low level functions"),
-			makeString("3"));
+							 makeString("Special table 3: Low level functions"),
+							 makeString("3"));
 	storeIntoDictionaryArray(loResult, &loBehindTheEnd,
-			makeString("Special table 4: Message names"), makeString("4"));
+							 makeString("Special table 4: Message names"), makeString("4"));
 
 	sortDictionaryAccordingToSecondNumber(loResult);
 	printf("The reading of the resource name array finished.\n");
@@ -532,13 +598,14 @@ DICTENTRYPOINTER *getResourceNameArray(FILE *aResFile,
  Read the raw import dictionary (just what is in the resource, not resolving anything)
  */
 DICTENTRYPOINTER *getRawImportArray(int aImportResourceNumber, FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers, int *aImportResourceSize) {
+									DIRPOINTER *aDirectoryPointers, int *aImportResourceSize)
+{
 	DICTENTRYPOINTER *loResult;
 	printf(
-			"Reading of the import array from the resource entry %d started ...\n",
-			aImportResourceNumber);
+		"Reading of the import array from the resource entry %d started ...\n",
+		aImportResourceNumber);
 	loResult = readTheDictionary(aImportResourceNumber, MAX_IMPORT_TABLE_ITEMS,
-			aResFile, aDirectoryPointers, aImportResourceSize);
+								 aResFile, aDirectoryPointers, aImportResourceSize);
 	printf("The reading of the import array finished.\n");
 	return (loResult);
 }
@@ -547,7 +614,8 @@ DICTENTRYPOINTER *getRawImportArray(int aImportResourceNumber, FILE *aResFile,
  Get the full import array (resolve the import entry items)
  */
 IMPORTENTRYPOINTER *getFullImportArray(DICTENTRYPOINTER *aRawImportArray,
-		FILE *aResFile, DIRPOINTER *aDirectoryPointers) {
+									   FILE *aResFile, DIRPOINTER *aDirectoryPointers)
+{
 	IMPORTENTRYPOINTER *loResult;
 	int loNumberOfItems;
 	int loImportArraySizeInBytes;
@@ -555,45 +623,49 @@ IMPORTENTRYPOINTER *getFullImportArray(DICTENTRYPOINTER *aRawImportArray,
 	int i;
 
 	printf("Conversion of the raw import array started ...\n");
-	if (aRawImportArray == NULL) {
+	if (aRawImportArray == NULL)
+	{
 		printf("The raw import array is NULL!\n");
 		return (NULL);
 	}
 	loNumberOfItems = getNumberOfItems(aRawImportArray);
-	if (loNumberOfItems == -1) {
+	if (loNumberOfItems == -1)
+	{
 		printf(
-				"Unable to determine the number of the items in the raw import array!");
+			"Unable to determine the number of the items in the raw import array!");
 		return (NULL);
 	}
 
 	// at the end of the array there is always NULL element
 	loAllocatedImportEntries = loNumberOfItems + 1;
-	loImportArraySizeInBytes = loAllocatedImportEntries
-			* sizeof(struct INTERNAL_IMPORT_ENTRY);
-	loResult = (IMPORTENTRYPOINTER *) malloc(loImportArraySizeInBytes);
+	loImportArraySizeInBytes = loAllocatedImportEntries * sizeof(struct INTERNAL_IMPORT_ENTRY);
+	loResult = (IMPORTENTRYPOINTER *)malloc(loImportArraySizeInBytes);
 
-	if (loResult == NULL) {
+	if (loResult == NULL)
+	{
 		printf(
-				"The allocation of the array for the import array with the size %d failed!\n",
-				loAllocatedImportEntries);
+			"The allocation of the array for the import array with the size %d failed!\n",
+			loAllocatedImportEntries);
 		return (NULL);
 	}
 
 	// set everything to NULL
-	for (i = 0; i < loAllocatedImportEntries; i++) {
+	for (i = 0; i < loAllocatedImportEntries; i++)
+	{
 		loResult[i] = NULL;
 	}
 
 	// resolve messages
-	for (i = 0; i < loNumberOfItems; i++) {
+	for (i = 0; i < loNumberOfItems; i++)
+	{
 		char loType;
 		char *loCommaPos;
 		char *loFirst;
 		char *loSecond;
 		loFirst = aRawImportArray[i]->first;
 		loSecond = aRawImportArray[i]->second;
-		loResult[i] = (IMPORTENTRYPOINTER) malloc(
-				sizeof(struct INTERNAL_IMPORT_ENTRY));
+		loResult[i] = (IMPORTENTRYPOINTER)malloc(
+			sizeof(struct INTERNAL_IMPORT_ENTRY));
 		loResult[i]->importType = EXPORT_ENTRY_UNDEFINED;
 		loResult[i]->firstOriginal = makeString(loFirst);
 		loResult[i]->secondOriginal = makeString(loSecond);
@@ -605,31 +677,39 @@ IMPORTENTRYPOINTER *getFullImportArray(DICTENTRYPOINTER *aRawImportArray,
 		loType = loFirst[0];
 		loCommaPos = strchr(loSecond, ',');
 
-		if (loType == 'C' && loCommaPos == NULL) {
+		if (loType == 'C' && loCommaPos == NULL)
+		{
 			// runtime function
 			int loRuntimeFunctionNumber;
 			loResult[i]->importType = IMPORT_ENTRY_RUNTIME_FUNCTION;
 			loRuntimeFunctionNumber = atoi(loSecond);
-			if (loRuntimeFunctionNumber == 0 && strcmp(loSecond, "0") != 0) {
+			if (loRuntimeFunctionNumber == 0 && strcmp(loSecond, "0") != 0)
+			{
 				printf(
-						"Error when converting the runtime function number %s from string to a number!\n",
-						loSecond);
+					"Error when converting the runtime function number %s from string to a number!\n",
+					loSecond);
 				loRuntimeFunctionNumber = -1;
 			}
 			loResult[i]->runtimeFunctionNumber = loRuntimeFunctionNumber;
-		} else if ((loType == 'B' || loType == 'W' || loType == 'L')
-				&& loCommaPos != NULL) {
+		}
+		else if ((loType == 'B' || loType == 'W' || loType == 'L') && loCommaPos != NULL)
+		{
 			// imported variable (simple or array - we cannot distinguis it yet)
 			int loImportedVariableNumber;
 			int loOriginalResourceNumber;
 			char loTmp[256];
 			int loNumberLength;
 
-			if (loType == 'B') {
+			if (loType == 'B')
+			{
 				loResult[i]->importType = IMPORT_ENTRY_BYTE;
-			} else if (loType == 'W') {
+			}
+			else if (loType == 'W')
+			{
 				loResult[i]->importType = IMPORT_ENTRY_WORD;
-			} else if (loType == 'L') {
+			}
+			else if (loType == 'L')
+			{
 				loResult[i]->importType = IMPORT_ENTRY_LONG;
 			}
 
@@ -638,40 +718,49 @@ IMPORTENTRYPOINTER *getFullImportArray(DICTENTRYPOINTER *aRawImportArray,
 			strncpy(loTmp, loSecond, loNumberLength);
 			loTmp[loNumberLength] = '\0';
 			loImportedVariableNumber = atoi(loTmp);
-			if (loImportedVariableNumber == 0 && strcmp(loTmp, "0") != 0) {
+			if (loImportedVariableNumber == 0 && strcmp(loTmp, "0") != 0)
+			{
 				printf("Failure to convert the imported variable number: %s!\n",
-						loTmp);
-			} else {
+					   loTmp);
+			}
+			else
+			{
 				// set the value
 				loResult[i]->importedVariableNumber = loImportedVariableNumber;
 			}
 			// convert the number of the resource from which the variable is imported
 			strcpy(loTmp, loCommaPos + 1);
 			loOriginalResourceNumber = atoi(loTmp);
-			if (loOriginalResourceNumber == 0 && strcmp(loTmp, "0") != 0) {
+			if (loOriginalResourceNumber == 0 && strcmp(loTmp, "0") != 0)
+			{
 				printf(
-						"Failure to convert the resource number from which the variable is imported: %s!\n",
-						loTmp);
-			} else {
+					"Failure to convert the resource number from which the variable is imported: %s!\n",
+					loTmp);
+			}
+			else
+			{
 				// set the value
 				char loOriginalResourceName[256];
 				loResult[i]->originalResourceNumber = loOriginalResourceNumber;
 				if (getResourceName(loOriginalResourceName,
-						loOriginalResourceNumber) == NULL) {
+									loOriginalResourceNumber) == NULL)
+				{
 					printf(
-							"Failure to find the name from for the resource %d from which the variable %s is imported!\n",
-							loOriginalResourceNumber, loFirst);
+						"Failure to find the name from for the resource %d from which the variable %s is imported!\n",
+						loOriginalResourceNumber, loFirst);
 					strcpy(loOriginalResourceName, "__unknown_resource_name__");
 				}
 				loResult[i]->originalResourceName = makeString(
-						loOriginalResourceName);
+					loOriginalResourceName);
 			}
 
-			//printf("\nImported variable original entries: %s   %s\n", loFirst, loSecond);
-			//printf("Imported variable decoded:\n  number:%d resource number: %d resource name: %s\n\n",
-			//        loResult[i]->importedVariableNumber, loResult[i]->originalResourceNumber,
-			//        ((loResult[i]->originalResourceName == NULL)?"NULL":loResult[i]->originalResourceName));
-		} else {
+			// printf("\nImported variable original entries: %s   %s\n", loFirst, loSecond);
+			// printf("Imported variable decoded:\n  number:%d resource number: %d resource name: %s\n\n",
+			//         loResult[i]->importedVariableNumber, loResult[i]->originalResourceNumber,
+			//         ((loResult[i]->originalResourceName == NULL)?"NULL":loResult[i]->originalResourceName));
+		}
+		else
+		{
 			printf("Unknown import entry type: %s %s!\n", loFirst, loSecond);
 		}
 	}
@@ -683,13 +772,14 @@ IMPORTENTRYPOINTER *getFullImportArray(DICTENTRYPOINTER *aRawImportArray,
  Read the raw export dictionary (just what is in the resource, not resolving anything)
  */
 DICTENTRYPOINTER *getRawExportArray(int aExportResourceNumber, FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers, int *aExportResourceSize) {
+									DIRPOINTER *aDirectoryPointers, int *aExportResourceSize)
+{
 	DICTENTRYPOINTER *loResult;
 	printf(
-			"Reading of the export array from the resource entry %d started ...\n",
-			aExportResourceNumber);
+		"Reading of the export array from the resource entry %d started ...\n",
+		aExportResourceNumber);
 	loResult = readTheDictionary(aExportResourceNumber, MAX_EXPORT_TABLE_ITEMS,
-			aResFile, aDirectoryPointers, aExportResourceSize);
+								 aResFile, aDirectoryPointers, aExportResourceSize);
 	printf("The reading of the export array finished.\n");
 	return (loResult);
 }
@@ -698,7 +788,8 @@ DICTENTRYPOINTER *getRawExportArray(int aExportResourceNumber, FILE *aResFile,
  Get the full export array (resolve the export entry items)
  */
 EXPORTENTRYPOINTER *getFullExportArray(DICTENTRYPOINTER *aRawExportArray,
-		FILE *aResFile, DIRPOINTER *aDirectoryPointers) {
+									   FILE *aResFile, DIRPOINTER *aDirectoryPointers)
+{
 	EXPORTENTRYPOINTER *loResult;
 	int loNumberOfItems;
 	int loExportArraySizeInBytes;
@@ -706,37 +797,41 @@ EXPORTENTRYPOINTER *getFullExportArray(DICTENTRYPOINTER *aRawExportArray,
 	int i;
 
 	printf("Conversion of the raw export array started ...\n");
-	if (aRawExportArray == NULL) {
+	if (aRawExportArray == NULL)
+	{
 		printf("The raw export array is NULL!\n");
 		return (NULL);
 	}
 	loNumberOfItems = getNumberOfItems(aRawExportArray);
-	if (loNumberOfItems == -1) {
+	if (loNumberOfItems == -1)
+	{
 		printf(
-				"Unable to determine the number of the items in the raw export array!");
+			"Unable to determine the number of the items in the raw export array!");
 		return (NULL);
 	}
 
 	// at the end of the array there is always NULL element
 	loAllocatedExportEntries = loNumberOfItems + 1;
-	loExportArraySizeInBytes = loAllocatedExportEntries
-			* sizeof(struct INTERNAL_EXPORT_ENTRY);
-	loResult = (EXPORTENTRYPOINTER *) malloc(loExportArraySizeInBytes);
+	loExportArraySizeInBytes = loAllocatedExportEntries * sizeof(struct INTERNAL_EXPORT_ENTRY);
+	loResult = (EXPORTENTRYPOINTER *)malloc(loExportArraySizeInBytes);
 
-	if (loResult == NULL) {
+	if (loResult == NULL)
+	{
 		printf(
-				"The allocation of the array for the export array with the size %d failed!\n",
-				loAllocatedExportEntries);
+			"The allocation of the array for the export array with the size %d failed!\n",
+			loAllocatedExportEntries);
 		return (NULL);
 	}
 
 	// set everything to NULL
-	for (i = 0; i < loAllocatedExportEntries; i++) {
+	for (i = 0; i < loAllocatedExportEntries; i++)
+	{
 		loResult[i] = NULL;
 	}
 
 	// resolve messages
-	for (i = 0; i < loNumberOfItems; i++) {
+	for (i = 0; i < loNumberOfItems; i++)
+	{
 		char loType;
 		char *loCommaPos;
 		char *loFirst;
@@ -744,8 +839,8 @@ EXPORTENTRYPOINTER *getFullExportArray(DICTENTRYPOINTER *aRawExportArray,
 		loFirst = aRawExportArray[i]->first;
 		loSecond = aRawExportArray[i]->second;
 
-		loResult[i] = (EXPORTENTRYPOINTER) malloc(
-				sizeof(struct INTERNAL_EXPORT_ENTRY));
+		loResult[i] = (EXPORTENTRYPOINTER)malloc(
+			sizeof(struct INTERNAL_EXPORT_ENTRY));
 		loResult[i]->exportType = EXPORT_ENTRY_UNDEFINED;
 		loResult[i]->firstOriginal = makeString(loFirst);
 		loResult[i]->secondOriginal = makeString(loSecond);
@@ -761,92 +856,119 @@ EXPORTENTRYPOINTER *getFullExportArray(DICTENTRYPOINTER *aRawExportArray,
 		loType = loFirst[0];
 		loCommaPos = strchr(loSecond, ',');
 
-		if (strcmp(loFirst, "N:OBJECT") == 0) {
+		if (strcmp(loFirst, "N:OBJECT") == 0)
+		{
 			loResult[i]->exportType = EXPORT_ENTRY_OBJECT_NAME;
 			loResult[i]->objectName = makeString(loSecond);
-		} else if (strcmp(loFirst, "N:PARENT") == 0) {
+		}
+		else if (strcmp(loFirst, "N:PARENT") == 0)
+		{
 			int loParentResourceNumber;
 			char loParentResourceName[256];
 			loResult[i]->exportType = EXPORT_ENTRY_PARENT_NUMBER;
 			loParentResourceNumber = atoi(loSecond);
-			if (loParentResourceNumber == 0 && strcmp(loSecond, "0") != 0) {
+			if (loParentResourceNumber == 0 && strcmp(loSecond, "0") != 0)
+			{
 				// failed numeric conversion
 				loParentResourceNumber = -1;
 				printf(
-						"Failure to convert the parent number %s in the export resource!\n",
-						loSecond);
-			} else {
+					"Failure to convert the parent number %s in the export resource!\n",
+					loSecond);
+			}
+			else
+			{
 				// assign value
 				loResult[i]->parentResourceNumber = loParentResourceNumber;
 			}
-			if (loParentResourceNumber
-					== -1|| getResourceName(loParentResourceName, loParentResourceNumber) == NULL) {
+			if (loParentResourceNumber == -1 || getResourceName(loParentResourceName, loParentResourceNumber) == NULL)
+			{
 				strcpy(loParentResourceName, "__unknown_parent_name__");
 			}
 			loResult[i]->parentResourceName = makeString(loParentResourceName);
-		} else if (loType == 'M' && loCommaPos == NULL) {
+		}
+		else if (loType == 'M' && loCommaPos == NULL)
+		{
 			// it is a message
 			char loMessageName[256];
 			int loMessageHandlerStart;
 			loResult[i]->exportType = EXPORT_ENTRY_MESSAGE_HANDLER;
 			if (getMessageName(loMessageName, loFirst, aResFile,
-					aDirectoryPointers) != NULL) {
+							   aDirectoryPointers) != NULL)
+			{
 				loResult[i]->messageHandlerName = makeString(loMessageName);
-			} else {
+			}
+			else
+			{
 				printf(
-						"Failure to resolve the message hadler reference %s in the export resource!\n",
-						aRawExportArray[i]->first);
+					"Failure to resolve the message hadler reference %s in the export resource!\n",
+					aRawExportArray[i]->first);
 				loResult[i]->messageHandlerName = makeString(
-						"__unknown_message_handler__");
+					"__unknown_message_handler__");
 			}
 			loMessageHandlerStart = atoi(loSecond);
-			if (loMessageHandlerStart == 0 && strcmp(loSecond, "0") != 0) {
+			if (loMessageHandlerStart == 0 && strcmp(loSecond, "0") != 0)
+			{
 				// failed numeric conversion
 				printf(
-						"Failure to convert the message handler start position %s in the export resource!\n",
-						loSecond);
+					"Failure to convert the message handler start position %s in the export resource!\n",
+					loSecond);
 				loMessageHandlerStart = -1;
 			}
 			loResult[i]->messageHandlerStart = loMessageHandlerStart;
-		} else if ((loType == 'B' || loType == 'W' || loType == 'L')
-				&& loCommaPos == NULL) {
+		}
+		else if ((loType == 'B' || loType == 'W' || loType == 'L') && loCommaPos == NULL)
+		{
 			// simple exported variables (not arrays)
 			int loExportedVariablePosition;
 
-			if (loType == 'B') {
+			if (loType == 'B')
+			{
 				loResult[i]->exportType = EXPORT_ENTRY_BYTE;
-			} else if (loType == 'W') {
+			}
+			else if (loType == 'W')
+			{
 				loResult[i]->exportType = EXPORT_ENTRY_WORD;
-			} else if (loType == 'L') {
+			}
+			else if (loType == 'L')
+			{
 				loResult[i]->exportType = EXPORT_ENTRY_LONG;
 			}
 
 			loExportedVariablePosition = atoi(loSecond);
-			if (loExportedVariablePosition == 0 && strcmp(loSecond, "0") != 0) {
+			if (loExportedVariablePosition == 0 && strcmp(loSecond, "0") != 0)
+			{
 				printf(
-						"Failure to convert the exported variable position: %s!\n",
-						loSecond);
-			} else {
+					"Failure to convert the exported variable position: %s!\n",
+					loSecond);
+			}
+			else
+			{
 				// set the value
 				loResult[i]->exportedVariablePosition =
-						loExportedVariablePosition;
+					loExportedVariablePosition;
 			}
 
-			//printf("\nExported variable original entries: %s   %s\n", loFirst, loSecond);
-			//printf("Exported variable decoded - position: %d\n\n", loResult[i]->exportedVariablePosition);
-		} else if ((loType == 'B' || loType == 'W' || loType == 'L')
-				&& loCommaPos != NULL) {
+			// printf("\nExported variable original entries: %s   %s\n", loFirst, loSecond);
+			// printf("Exported variable decoded - position: %d\n\n", loResult[i]->exportedVariablePosition);
+		}
+		else if ((loType == 'B' || loType == 'W' || loType == 'L') && loCommaPos != NULL)
+		{
 			// exported arrays
 			int loExportedArrayPosition;
 			int loExportedArraySizeInElements;
 			int loNumberLength;
 			char loTmp[256];
 
-			if (loType == 'B') {
+			if (loType == 'B')
+			{
 				loResult[i]->exportType = EXPORT_ENTRY_ARRAY_BYTE;
-			} else if (loType == 'W') {
+			}
+			else if (loType == 'W')
+			{
 				loResult[i]->exportType = EXPORT_ENTRY_ARRAY_WORD;
-			} else if (loType == 'L') {
+			}
+			else if (loType == 'L')
+			{
 				loResult[i]->exportType = EXPORT_ENTRY_ARRAY_LONG;
 			}
 			// convert the exported array position
@@ -854,30 +976,37 @@ EXPORTENTRYPOINTER *getFullExportArray(DICTENTRYPOINTER *aRawExportArray,
 			strncpy(loTmp, loSecond, loNumberLength);
 			loTmp[loNumberLength] = '\0';
 			loExportedArrayPosition = atoi(loTmp);
-			if (loExportedArrayPosition == 0 && strcmp(loTmp, "0") != 0) {
+			if (loExportedArrayPosition == 0 && strcmp(loTmp, "0") != 0)
+			{
 				printf("Failure to convert the exported array position: %s!\n",
-						loTmp);
-			} else {
+					   loTmp);
+			}
+			else
+			{
 				// set the value
 				loResult[i]->exportedArrayPosition = loExportedArrayPosition;
 			}
 			// convert the number of the resource from which the variable is imported
 			strcpy(loTmp, loCommaPos + 1);
 			loExportedArraySizeInElements = atoi(loTmp);
-			if (loExportedArraySizeInElements == 0 && strcmp(loTmp, "0") != 0) {
+			if (loExportedArraySizeInElements == 0 && strcmp(loTmp, "0") != 0)
+			{
 				printf(
-						"Failure to convert the size of the exported array: %s!\n",
-						loTmp);
-			} else {
+					"Failure to convert the size of the exported array: %s!\n",
+					loTmp);
+			}
+			else
+			{
 				// set the value
 				loResult[i]->exportedArraySizeInElements =
-						loExportedArraySizeInElements;
+					loExportedArraySizeInElements;
 			}
-			//printf("\nExported array original entries: %s   %s\n", loFirst, loSecond);
-			//printf("Exported array decoded - position: %d size in elements: %d\n\n",
-			//    loResult[i]->exportedArrayPosition, loResult[i]->exportedArraySizeInElements);
-
-		} else {
+			// printf("\nExported array original entries: %s   %s\n", loFirst, loSecond);
+			// printf("Exported array decoded - position: %d size in elements: %d\n\n",
+			//     loResult[i]->exportedArrayPosition, loResult[i]->exportedArraySizeInElements);
+		}
+		else
+		{
 			printf("Unknown export entry type: %s %s!\n", loFirst, loSecond);
 		}
 	}
@@ -890,26 +1019,29 @@ EXPORTENTRYPOINTER *getFullExportArray(DICTENTRYPOINTER *aRawExportArray,
  Displays the import dictionary
  */
 void displayImportDictionary(char *aImportResourceName,
-		int aImportResourceNumber, FILE *aOutputFile,
-		IMPORTENTRYPOINTER *aFullImportResourceDictionary,
-		int aSecondIsDecimalNumber) {
+							 int aImportResourceNumber, FILE *aOutputFile,
+							 IMPORTENTRYPOINTER *aFullImportResourceDictionary,
+							 int aSecondIsDecimalNumber)
+{
 	int i;
 	int loPreviouslyDisplayedType;
 	fprintf(aOutputFile,
 			"\n*** IMPORT DICTIONARY (resource name %s, resource number: %d) ***\n",
 			aImportResourceName, aImportResourceNumber);
-	if (aSecondIsDecimalNumber == true) {
+	if (aSecondIsDecimalNumber == true)
+	{
 		fprintf(aOutputFile,
 				"(for some decadic numbers their hexadecimal values are provided in () )\n");
 	}
-	if (aFullImportResourceDictionary == NULL) {
+	if (aFullImportResourceDictionary == NULL)
+	{
 		fprintf(aOutputFile, "The import dictionary pointer is NULL!\n");
 		return;
 	}
 	loPreviouslyDisplayedType = IMPORT_DISPLAY_NOTHING;
 	for (i = 0;
-			i < MAX_IMPORT_TABLE_ITEMS
-					&& aFullImportResourceDictionary[i] != NULL; i++) {
+		 i < MAX_IMPORT_TABLE_ITEMS && aFullImportResourceDictionary[i] != NULL; i++)
+	{
 		IMPORTENTRYPOINTER loCurrentImportEntry;
 		int loCurrentImportEntryType;
 		int loCurrentlyDisplayedType;
@@ -924,25 +1056,27 @@ void displayImportDictionary(char *aImportResourceName,
 		sprintf(loSecond, "%s", loCurrentImportEntry->secondOriginal);
 
 		// the second can be a decimal number and we may want to add a hexadecimal value to it
-		if (aSecondIsDecimalNumber
-				== true&& strchr(loCurrentImportEntry->secondOriginal, ',') == NULL) {
-		// probably a number
-int		loNum = atoi(loCurrentImportEntry->secondOriginal);
-		if (loNum == 0 && strcmp(loCurrentImportEntry->secondOriginal, "0") != 0)
+		if (aSecondIsDecimalNumber == true && strchr(loCurrentImportEntry->secondOriginal, ',') == NULL)
 		{
-			// not a number, do not change the value
+			// probably a number
+			int loNum = atoi(loCurrentImportEntry->secondOriginal);
+			if (loNum == 0 && strcmp(loCurrentImportEntry->secondOriginal, "0") != 0)
+			{
+				// not a number, do not change the value
+			}
+			else
+			{
+				// number
+				sprintf(loSecond, "%4s  (%04x)", loCurrentImportEntry->secondOriginal, loNum);
+			}
 		}
-		else
-		{
-			// number
-			sprintf(loSecond, "%4s  (%04x)", loCurrentImportEntry->secondOriginal, loNum);
-		}
-	}
 
-		switch (loCurrentImportEntryType) {
+		switch (loCurrentImportEntryType)
+		{
 		case IMPORT_ENTRY_RUNTIME_FUNCTION:
 			loCurrentlyDisplayedType = IMPORT_DISPLAY_RUNTIME;
-			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType) {
+			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType)
+			{
 				// header
 				fprintf(aOutputFile, "* RUNTIME FUNCTIONS:\n");
 				fprintf(aOutputFile, "%-35s     %-10s\n",
@@ -965,7 +1099,8 @@ int		loNum = atoi(loCurrentImportEntry->secondOriginal);
 			// (Well, the simple/array question could be also decided by checking the export resource
 			// for the original resource which exports the variable - do it in future!)
 			loCurrentlyDisplayedType = IMPORT_DISPLAY_VARIABLE;
-			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType) {
+			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType)
+			{
 				// header
 				fprintf(aOutputFile,
 						"* IMPORTED VARIABLES (not differentiating between simple variables and arrays!):\n");
@@ -981,7 +1116,8 @@ int		loNum = atoi(loCurrentImportEntry->secondOriginal);
 			break;
 		default:
 			loCurrentlyDisplayedType = IMPORT_DISPLAY_UNKNOWN;
-			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType) {
+			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType)
+			{
 				// header
 				fprintf(aOutputFile, "* UNKNOWN IMPORT ENTRIES:\n");
 				fprintf(aOutputFile, "%30s     %30s\n", "FIRST ENTRY",
@@ -999,27 +1135,30 @@ int		loNum = atoi(loCurrentImportEntry->secondOriginal);
  Displays the export dictionary
  */
 void displayExportDictionary(char *aExportResourceName,
-		int aExportResourceNumber, FILE *aOutputFile,
-		EXPORTENTRYPOINTER *aFullExportResourceDictionary,
-		int aSecondIsDecimalNumber) {
+							 int aExportResourceNumber, FILE *aOutputFile,
+							 EXPORTENTRYPOINTER *aFullExportResourceDictionary,
+							 int aSecondIsDecimalNumber)
+{
 	int i;
 	int loPreviouslyDisplayedType;
 	fprintf(aOutputFile,
 			"\n*** EXPORT DICTIONARY (resource name %s, resource number: %d) ***\n",
 			aExportResourceName, aExportResourceNumber);
-	if (aSecondIsDecimalNumber == true) {
+	if (aSecondIsDecimalNumber == true)
+	{
 		fprintf(aOutputFile,
 				"(for some decadic numbers their hexadecimal values are provided in () )\n");
 	}
-	if (aFullExportResourceDictionary == NULL) {
+	if (aFullExportResourceDictionary == NULL)
+	{
 		fprintf(aOutputFile, "The export dictionary pointer is NULL!\n");
 		return;
 	}
 
 	loPreviouslyDisplayedType = EXPORT_DISPLAY_NOTHING;
 	for (i = 0;
-			i < MAX_EXPORT_TABLE_ITEMS
-					&& aFullExportResourceDictionary[i] != NULL; i++) {
+		 i < MAX_EXPORT_TABLE_ITEMS && aFullExportResourceDictionary[i] != NULL; i++)
+	{
 		EXPORTENTRYPOINTER loCurrentExportEntry;
 		int loCurrentExportEntryType;
 		int loCurrentlyDisplayedType;
@@ -1033,25 +1172,27 @@ void displayExportDictionary(char *aExportResourceName,
 		sprintf(loSecond, "%s", loCurrentExportEntry->secondOriginal);
 
 		// the second can be a decimal number and we may want to add a hexadecimal value to it
-		if (aSecondIsDecimalNumber
-				== true&& strchr(loCurrentExportEntry->secondOriginal, ',') == NULL) {
-		// probably a number
-int		loNum = atoi(loCurrentExportEntry->secondOriginal);
-		if (loNum == 0 && strcmp(loCurrentExportEntry->secondOriginal, "0") != 0)
+		if (aSecondIsDecimalNumber == true && strchr(loCurrentExportEntry->secondOriginal, ',') == NULL)
 		{
-			// not a number, do not change the value
+			// probably a number
+			int loNum = atoi(loCurrentExportEntry->secondOriginal);
+			if (loNum == 0 && strcmp(loCurrentExportEntry->secondOriginal, "0") != 0)
+			{
+				// not a number, do not change the value
+			}
+			else
+			{
+				// number
+				sprintf(loSecond, "%4s  (%04x)", loCurrentExportEntry->secondOriginal, loNum);
+			}
 		}
-		else
-		{
-			// number
-			sprintf(loSecond, "%4s  (%04x)", loCurrentExportEntry->secondOriginal, loNum);
-		}
-	}
 
-		switch (loCurrentExportEntryType) {
+		switch (loCurrentExportEntryType)
+		{
 		case EXPORT_ENTRY_OBJECT_NAME:
 			loCurrentlyDisplayedType = EXPORT_DISPLAY_NAME;
-			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType) {
+			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType)
+			{
 				// header
 				fprintf(aOutputFile, "* OBJECT NAME:\n");
 				fprintf(aOutputFile, "%-20s  %-20s\n", "FIRST ENTRY",
@@ -1062,7 +1203,8 @@ int		loNum = atoi(loCurrentExportEntry->secondOriginal);
 			break;
 		case EXPORT_ENTRY_PARENT_NUMBER:
 			loCurrentlyDisplayedType = EXPORT_DISPLAY_PARENT;
-			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType) {
+			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType)
+			{
 				// header
 				fprintf(aOutputFile, "* PARENT NUMBER:\n");
 				fprintf(aOutputFile, "%-20s  %-20s  %-20s\n", "FIRST ENTRY",
@@ -1074,7 +1216,8 @@ int		loNum = atoi(loCurrentExportEntry->secondOriginal);
 			break;
 		case EXPORT_ENTRY_MESSAGE_HANDLER:
 			loCurrentlyDisplayedType = EXPORT_DISPLAY_HANDLER;
-			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType) {
+			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType)
+			{
 				// header
 				fprintf(aOutputFile, "* MESSAGE HANDLERS:\n");
 				fprintf(aOutputFile, "%-20s  %-20s  %-30s\n", "FIRST ENTRY",
@@ -1088,7 +1231,8 @@ int		loNum = atoi(loCurrentExportEntry->secondOriginal);
 		case EXPORT_ENTRY_WORD:
 		case EXPORT_ENTRY_LONG:
 			loCurrentlyDisplayedType = EXPORT_DISPLAY_VARIABLE;
-			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType) {
+			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType)
+			{
 				// header
 				fprintf(aOutputFile, "* EXPORTED VARIABLES:\n");
 				fprintf(aOutputFile, "%-20s  %-20s\n", "FIRST ENTRY (NAME)",
@@ -1101,7 +1245,8 @@ int		loNum = atoi(loCurrentExportEntry->secondOriginal);
 		case EXPORT_ENTRY_ARRAY_WORD:
 		case EXPORT_ENTRY_ARRAY_LONG:
 			loCurrentlyDisplayedType = EXPORT_DISPLAY_ARRAY;
-			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType) {
+			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType)
+			{
 				// header
 				fprintf(aOutputFile, "* EXPORTED ARRAYS:\n");
 				fprintf(aOutputFile, "%-20s  %-20s\n", "FIRST ENTRY (NAME)",
@@ -1112,7 +1257,8 @@ int		loNum = atoi(loCurrentExportEntry->secondOriginal);
 			break;
 		default:
 			loCurrentlyDisplayedType = EXPORT_DISPLAY_UNKNOWN;
-			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType) {
+			if (loCurrentlyDisplayedType != loPreviouslyDisplayedType)
+			{
 				// header
 				fprintf(aOutputFile, "* UNKNOWN EXPORT ENTRIES:\n");
 				fprintf(aOutputFile, "%30s     %30s\n", "FIRST ENTRY",
@@ -1130,13 +1276,14 @@ int		loNum = atoi(loCurrentExportEntry->secondOriginal);
  Read a special array (AESOP resources 0..4)
  */
 DICTENTRYPOINTER *getSpecialArray(int aResourceNumber, FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers) {
+								  DIRPOINTER *aDirectoryPointers)
+{
 	DICTENTRYPOINTER *loResult;
 	printf(
-			"Reading of the special array from the resource entry %d started ...\n",
-			aResourceNumber);
+		"Reading of the special array from the resource entry %d started ...\n",
+		aResourceNumber);
 	loResult = readTheDictionary(aResourceNumber,
-			MAX_NUMBER_OF_DICTIONARY_ITEMS, aResFile, aDirectoryPointers, NULL);
+								 MAX_NUMBER_OF_DICTIONARY_ITEMS, aResFile, aDirectoryPointers, NULL);
 	printf("The reading of the special array finished.\n");
 	return (loResult);
 }
@@ -1144,63 +1291,72 @@ DICTENTRYPOINTER *getSpecialArray(int aResourceNumber, FILE *aResFile,
 /*
  Gets message name for the export table string M:<number>
  */
-char* getMessageName(char *aResult, char *aExportTableString, FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers) {
+char *getMessageName(char *aResult, char *aExportTableString, FILE *aResFile,
+					 DIRPOINTER *aDirectoryPointers)
+{
 	char loNumberString[256];
 	int loNumber;
 	int i;
 	int loMessages;
 
-	if (myMessageNamesDictionary == NULL) {
-		if (readMessageNamesDictionary(aResFile, aDirectoryPointers) == NULL) {
+	if (myMessageNamesDictionary == NULL)
+	{
+		if (readMessageNamesDictionary(aResFile, aDirectoryPointers) == NULL)
+		{
 			const char *loError =
-					"Unable to read the message names dictionary (resource 4)!\n";
+				"Unable to read the message names dictionary (resource 4)!\n";
 			printf("%s\n", loError);
 			return (NULL);
 		}
 	}
 
-	if (aExportTableString == NULL || strlen(aExportTableString) <= 2) {
+	if (aExportTableString == NULL || strlen(aExportTableString) <= 2)
+	{
 		// NULL or too short
 		printf("Error: getMessageName used on NULL or too short string!\n");
 		return (NULL);
 	}
-	if ((aExportTableString[0] == 'M' && aExportTableString[1] == ':') == 0) {
+	if ((aExportTableString[0] == 'M' && aExportTableString[1] == ':') == 0)
+	{
 		// not M:<number>
 		printf("Error: getMessageName used on the string %s!\n",
-				aExportTableString);
+			   aExportTableString);
 		return (NULL);
 	}
-	strcpy(loNumberString, aExportTableString + 2);  // copy behind M:
+	strcpy(loNumberString, aExportTableString + 2); // copy behind M:
 	loNumber = atoi(loNumberString);
-	if (loNumber == 0 && strcmp(loNumberString, "0") != 0) {
+	if (loNumber == 0 && strcmp(loNumberString, "0") != 0)
+	{
 		printf(
-				"Error while converting the number %s from the import table reference %s\n",
-				loNumberString, aExportTableString);
+			"Error while converting the number %s from the import table reference %s\n",
+			loNumberString, aExportTableString);
 		return (NULL);
 	}
 	loMessages = getNumberOfItems(myMessageNamesDictionary);
-	if (loMessages == -1) {
+	if (loMessages == -1)
+	{
 		printf("Error counting the numbers of messafe name table!\n");
 		return (NULL);
 	}
-	for (i = 0; i < loMessages; i++) {
+	for (i = 0; i < loMessages; i++)
+	{
 		int loTestedMsgNumber;
 		loTestedMsgNumber = atoi(myMessageNamesDictionary[i]->second);
-		if (loTestedMsgNumber == 0
-				&& strcmp(myMessageNamesDictionary[i]->second, "0") != 0) {
+		if (loTestedMsgNumber == 0 && strcmp(myMessageNamesDictionary[i]->second, "0") != 0)
+		{
 			printf(
-					"Error converting the number %s from the message names table!\n",
-					myMessageNamesDictionary[i]->second);
+				"Error converting the number %s from the message names table!\n",
+				myMessageNamesDictionary[i]->second);
 			continue;
 		}
-		if (loTestedMsgNumber == loNumber) {
+		if (loTestedMsgNumber == loNumber)
+		{
 			strcpy(aResult, myMessageNamesDictionary[i]->first);
 			return (aResult);
 		}
 	}
 	printf("The message name was not found for the export table string: %s!\n",
-			aExportTableString);
+		   aExportTableString);
 	return (NULL);
 }
 
@@ -1208,7 +1364,8 @@ char* getMessageName(char *aResult, char *aExportTableString, FILE *aResFile,
  Read the message names dictionary
  */
 DICTENTRYPOINTER *readMessageNamesDictionary(FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers) {
+											 DIRPOINTER *aDirectoryPointers)
+{
 	// read the array with the message names (resource 4)
 	myMessageNamesDictionary = getSpecialArray(4, aResFile, aDirectoryPointers);
 	return (myMessageNamesDictionary);
@@ -1218,7 +1375,8 @@ DICTENTRYPOINTER *readMessageNamesDictionary(FILE *aResFile,
  Gets the information about resources
  */
 RESINFOPOINTER *getResourcesInformationTable(FILE *aResFile,
-		DIRPOINTER *aDirectoryPointers, int aLookForStringResources) {
+											 DIRPOINTER *aDirectoryPointers, int aLookForStringResources)
+{
 	int loNumberOfResources;
 	int loNumberOfEntriesInTable1;
 	int loNumberOfEntriesInTable2;
@@ -1231,69 +1389,77 @@ RESINFOPOINTER *getResourcesInformationTable(FILE *aResFile,
 	DICTENTRYPOINTER *loResourceTable2;
 
 	loResourceNameArray = getResourceNameArray(aResFile, aDirectoryPointers);
-	if (loResourceNameArray == NULL) {
+	if (loResourceNameArray == NULL)
+	{
 		printf("Unable to read the resource name dictionary (resource 0)!\n");
 		return (NULL);
 	}
 
 	// AESOP resource 1
 	loResourceTable1 = getSpecialArray(1, aResFile, aDirectoryPointers);
-	if (loResourceTable1 == NULL) {
+	if (loResourceTable1 == NULL)
+	{
 		printf("Unable to read the special AESOP resource 1!\n");
 		return (NULL);
 	}
 
 	// AESOP resource 2
 	loResourceTable2 = getSpecialArray(2, aResFile, aDirectoryPointers);
-	if (loResourceTable2 == NULL) {
+	if (loResourceTable2 == NULL)
+	{
 		printf("Unable to read the special AESOP resource 2\n");
 		return (NULL);
 	}
 
 	loNumberOfResources = getNumberOfItems(loResourceNameArray);
-	if (loNumberOfResources == -1) {
+	if (loNumberOfResources == -1)
+	{
 		printf(
-				"Failed to get the number of entries in the table of resource names.\n");
+			"Failed to get the number of entries in the table of resource names.\n");
 		return (NULL);
 	}
 	loNumberOfEntriesInTable1 = getNumberOfItems(loResourceTable1);
-	if (loNumberOfEntriesInTable1 == -1) {
+	if (loNumberOfEntriesInTable1 == -1)
+	{
 		printf(
-				"Failed to get the number of entries in the resource table 1.\n");
+			"Failed to get the number of entries in the resource table 1.\n");
 		return (NULL);
 	}
 	loNumberOfEntriesInTable2 = getNumberOfItems(loResourceTable2);
-	if (loNumberOfEntriesInTable2 == -1) {
+	if (loNumberOfEntriesInTable2 == -1)
+	{
 		printf(
-				"Failed to get the number of entries in the resource table 2.\n");
+			"Failed to get the number of entries in the resource table 2.\n");
 		return (NULL);
 	}
 	printf(
-			"The number of entries in resource 0: %d, resource 1: %d, resource 2: %d\n",
-			loNumberOfResources, loNumberOfEntriesInTable1,
-			loNumberOfEntriesInTable2);
+		"The number of entries in resource 0: %d, resource 1: %d, resource 2: %d\n",
+		loNumberOfResources, loNumberOfEntriesInTable1,
+		loNumberOfEntriesInTable2);
 
 	// There is always at least one NULL entry (end marker)
 	loAllocatedInfoEntries = loNumberOfResources + 1;
 
 	// allocate space for the dictionary array
-	loAllocatedInfoEntriesSizeInBytes = loAllocatedInfoEntries
-			* sizeof(struct INTERNAL_RESOURCE_INFO);
-	loResult = (RESINFOPOINTER *) malloc(loAllocatedInfoEntriesSizeInBytes);
-	if (loResult == NULL) {
+	loAllocatedInfoEntriesSizeInBytes = loAllocatedInfoEntries * sizeof(struct INTERNAL_RESOURCE_INFO);
+	loResult = (RESINFOPOINTER *)malloc(loAllocatedInfoEntriesSizeInBytes);
+	if (loResult == NULL)
+	{
 		printf(
-				"The allocation of the resource info array with the size %d failed!\n",
-				loAllocatedInfoEntries);
+			"The allocation of the resource info array with the size %d failed!\n",
+			loAllocatedInfoEntries);
 		return (NULL);
 	}
 
 	// set everything to NULL
-	for (i = 0; i < loAllocatedInfoEntries; i++) {
+	for (i = 0; i < loAllocatedInfoEntries; i++)
+	{
 		loResult[i] = NULL;
 	}
 
 	// now make the entries
-	for (i = 0; i < loNumberOfResources; i++) {
+	for (i = 0; i < loNumberOfResources; i++)
+	{
 
 		RESINFOPOINTER loInfoEntry;
 		char *loResourceName;
@@ -1304,15 +1470,17 @@ RESINFOPOINTER *getResourcesInformationTable(FILE *aResFile,
 		loResourceName = loResourceNameArray[i]->first;
 		loResourceNumberAsString = loResourceNameArray[i]->second;
 		loResourceNumber = getResourceNumberFromNumberString(
-				loResourceNumberAsString);
-		if (loResourceNumber == -1) {
+			loResourceNumberAsString);
+		if (loResourceNumber == -1)
+		{
 			printf("Unable to get the resource number for the resource: %s!\n",
-					loResourceName);
+				   loResourceName);
 			return (NULL);
 		}
-		loInfoEntry = (RESINFOPOINTER) malloc(
-				sizeof(struct INTERNAL_RESOURCE_INFO));
-		if (loInfoEntry == NULL) {
+		loInfoEntry = (RESINFOPOINTER)malloc(
+			sizeof(struct INTERNAL_RESOURCE_INFO));
+		if (loInfoEntry == NULL)
+		{
 			printf("The allocation of a resource info entry failed!\n");
 			return (NULL);
 		}
@@ -1320,18 +1488,20 @@ RESINFOPOINTER *getResourcesInformationTable(FILE *aResFile,
 		loInfoEntry->number = loResourceNumber;
 		loInfoEntry->name = makeString(loResourceName);
 		loInfoEntry->infoFromResource1 = getSecondEntryForTheFirstEntry(
-				loResourceTable1, loResourceName);
+			loResourceTable1, loResourceName);
 		loInfoEntry->infoFromResource2 = getSecondEntryForTheFirstEntry(
-				loResourceTable2, loResourceName);
+			loResourceTable2, loResourceName);
 		loInfoEntry->resourceType = getResourceType(aResFile,
-				aDirectoryPointers, loResourceNameArray, loResourceNumber,
-				loResourceName, loInfoEntry->infoFromResource1,
-				loInfoEntry->infoFromResource2, aLookForStringResources,
-				&loStringValue);
-		if (loInfoEntry->resourceType == RESOURCE_TYPE_STRING
-				&& loStringValue != NULL) {
+													aDirectoryPointers, loResourceNameArray, loResourceNumber,
+													loResourceName, loInfoEntry->infoFromResource1,
+													loInfoEntry->infoFromResource2, aLookForStringResources,
+													&loStringValue);
+		if (loInfoEntry->resourceType == RESOURCE_TYPE_STRING && loStringValue != NULL)
+		{
 			loInfoEntry->stringValue = loStringValue;
-		} else {
+		}
+		else
+		{
 			loInfoEntry->stringValue = NULL;
 		}
 
@@ -1343,37 +1513,45 @@ RESINFOPOINTER *getResourcesInformationTable(FILE *aResFile,
 /*
  Gets the information for the specified resource name if available in the dictinary
  */
-char* getSecondEntryForTheFirstEntry(DICTENTRYPOINTER *aResourceTable,
-		char *aResourceName) {
+char *getSecondEntryForTheFirstEntry(DICTENTRYPOINTER *aResourceTable,
+									 char *aResourceName)
+{
 	char loResultBuffer[512] = "";
 	int i;
 	for (i = 0; i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aResourceTable[i] != NULL;
-			i++) {
+		 i++)
+	{
 		char *loFirst;
 		char *loSecond;
 		loFirst = aResourceTable[i]->first;
 		loSecond = aResourceTable[i]->second;
-		if (strcmp(aResourceName, loFirst) == 0) {
+		if (strcmp(aResourceName, loFirst) == 0)
+		{
 			// found a record
-			if (strlen(loResultBuffer) > 0) {
+			if (strlen(loResultBuffer) > 0)
+			{
 				// I am not sure whether there can be more records for one resource, but let's handle it
 				strcat(loResultBuffer, "; ");
 			}
-			if (strlen(loResultBuffer) + strlen(loSecond) >= 512) {
+			if (strlen(loResultBuffer) + strlen(loSecond) >= 512)
+			{
 				// I hope this never happens
 				printf(
-						"getSecondEntryForTheFirstEntry(): the result buffer is too small for all the resource information of the resource %s!\n",
-						aResourceName);
+					"getSecondEntryForTheFirstEntry(): the result buffer is too small for all the resource information of the resource %s!\n",
+					aResourceName);
 				return (makeString(loResultBuffer));
 			}
 			// add it to the result buffer
 			strcat(loResultBuffer, loSecond);
 		}
 	}
-	if (strlen(loResultBuffer) == 0) {
+	if (strlen(loResultBuffer) == 0)
+	{
 		// nothing here
 		return (NULL);
-	} else {
+	}
+	else
+	{
 		return (makeString(loResultBuffer));
 	}
 }
@@ -1382,112 +1560,133 @@ char* getSecondEntryForTheFirstEntry(DICTENTRYPOINTER *aResourceTable,
  Get resource type
  */
 int getResourceType(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-		DICTENTRYPOINTER *aResourceNameArray, int aResourceNumber,
-		char *aResourceName, char *aInfoString1, char *aInfoString2,
-		int aLookForStringResources, char **aFoundStringPointer) {
+					DICTENTRYPOINTER *aResourceNameArray, int aResourceNumber,
+					char *aResourceName, char *aInfoString1, char *aInfoString2,
+					int aLookForStringResources, char **aFoundStringPointer)
+{
 	char loExportResource[256];
 	char aInfoString1UpperCase[512];
 	char aInfoString2UpperCase[512];
 	int i;
 
-	if (aResourceNumber < NUMBER_OF_SPECIAL_TABLES) {
+	if (aResourceNumber < NUMBER_OF_SPECIAL_TABLES)
+	{
 		return (RESOURCE_TYPE_SPECIAL);
 	}
 
 	// info string 1
-	if (aInfoString1 != NULL) {
+	if (aInfoString1 != NULL)
+	{
 		strcpy(aInfoString1UpperCase, aInfoString1);
-	} else {
+	}
+	else
+	{
 		strcpy(aInfoString1UpperCase, "");
 	}
 	toUpperCase(aInfoString1UpperCase);
 
-	if (strstr(aInfoString1UpperCase, PALETTE_PREFIX_UPPERCASE)
-			== aInfoString1UpperCase) {
+	if (strstr(aInfoString1UpperCase, PALETTE_PREFIX_UPPERCASE) == aInfoString1UpperCase)
+	{
 		// palette definition
 		return (RESOURCE_TYPE_PALETTE);
 	}
 
-	if (strstr(aInfoString1UpperCase, MAP_PREFIX_UPPERCASE)
-			== aInfoString1UpperCase) {
+	if (strstr(aInfoString1UpperCase, MAP_PREFIX_UPPERCASE) == aInfoString1UpperCase)
+	{
 		// EOB 3 map definition
 		return (RESOURCE_TYPE_MAP);
 	}
 
 	// info string 2
-	if (aInfoString2 != NULL) {
+	if (aInfoString2 != NULL)
+	{
 		strcpy(aInfoString2UpperCase, aInfoString2);
-	} else {
+	}
+	else
+	{
 		strcpy(aInfoString2UpperCase, "");
 	}
 	toUpperCase(aInfoString2UpperCase);
 
 	// test file extensions
-	if (stringEndsWith(aResourceName, IMPORT_EXTENSION) == true) {
+	if (stringEndsWith(aResourceName, IMPORT_EXTENSION) == true)
+	{
 		return (RESOURCE_TYPE_IMPORT);
 	}
-	if (stringEndsWith(aResourceName, EXPORT_EXTENSION) == true) {
+	if (stringEndsWith(aResourceName, EXPORT_EXTENSION) == true)
+	{
 		return (RESOURCE_TYPE_EXPORT);
 	}
-	if (stringEndsWith(aInfoString2UpperCase, BITMAP1_FILE_EXTENSION) == true
-			|| stringEndsWith(aInfoString2UpperCase, BITMAP2_FILE_EXTENSION)
-					== true) {
+	if (stringEndsWith(aInfoString2UpperCase, BITMAP1_FILE_EXTENSION) == true || stringEndsWith(aInfoString2UpperCase, BITMAP2_FILE_EXTENSION) == true)
+	{
 		return (RESOURCE_TYPE_BITMAP);
 	}
-	if (stringEndsWith(aInfoString2UpperCase, SOUND_FILE_EXTENSION) == true) {
+	if (stringEndsWith(aInfoString2UpperCase, SOUND_FILE_EXTENSION) == true)
+	{
 		return (RESOURCE_TYPE_SOUND);
 	}
-	if (stringEndsWith(aInfoString2UpperCase, MUSIC_FILE_EXTENSION) == true) {
+	if (stringEndsWith(aInfoString2UpperCase, MUSIC_FILE_EXTENSION) == true)
+	{
 		return (RESOURCE_TYPE_MUSIC);
 	}
-	if (stringEndsWith(aInfoString2UpperCase, FONT_FILE_EXTENSION) == true) {
+	if (stringEndsWith(aInfoString2UpperCase, FONT_FILE_EXTENSION) == true)
+	{
 		return (RESOURCE_TYPE_FONT);
 	}
 	strcpy(loExportResource, aResourceName);
 	strcat(loExportResource, EXPORT_EXTENSION);
 	for (i = 0;
-			i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aResourceNameArray[i] != NULL;
-			i++) {
-		if (strcmp(loExportResource, aResourceNameArray[i]->first) == 0) {
+		 i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aResourceNameArray[i] != NULL;
+		 i++)
+	{
+		if (strcmp(loExportResource, aResourceNameArray[i]->first) == 0)
+		{
 			// found a corresponding, so it is a code resource
 			return (RESOURCE_TYPE_CODE);
 		}
 	}
 
-	if (aLookForStringResources == true) {
+	if (aLookForStringResources == true)
+	{
 		// check whether it is not a string
 		struct RESEntryHeader *loResEntryHeader;
 		unsigned int loDataSize;
 		unsigned char *loBuffer;
 		int loDummy;
 		loResEntryHeader = getResourceEntryHeader(aResourceNumber, aResFile,
-				aDirectoryPointers);
-		if (loResEntryHeader == NULL) {
+												  aDirectoryPointers);
+		if (loResEntryHeader == NULL)
+		{
 			printf("Unable to read the header for the resource number: %d!\n",
-					aResourceNumber);
+				   aResourceNumber);
 			return (RESOURCE_TYPE_UNKNOWN);
 		}
 		loDataSize = loResEntryHeader->data_size;
-		if (loDataSize < 2 && loDataSize > MAX_LENGTH_OF_TESTED_STRING_RESOURCE) {
+		if (loDataSize < 2 && loDataSize > MAX_LENGTH_OF_TESTED_STRING_RESOURCE)
+		{
 			// too short or too long to be string, silently ignore
 			free(loResEntryHeader);
 			return (RESOURCE_TYPE_UNKNOWN);
 		}
 		loBuffer = readResourceBinary(aResourceNumber, aResFile,
-				aDirectoryPointers, &loDummy);
-		if (loBuffer == NULL) {
+									  aDirectoryPointers, &loDummy);
+		if (loBuffer == NULL)
+		{
 			printf("The reading of the resource %d failed!\n", aResourceNumber);
 			free(loResEntryHeader);
 			return (RESOURCE_TYPE_UNKNOWN);
 		}
-		if (loBuffer[0] == 'S' && loBuffer[1] == ':') {
+		if (loBuffer[0] == 'S' && loBuffer[1] == ':')
+		{
 			// it is a string
-			if (aFoundStringPointer != 0) {
-				*aFoundStringPointer = makeString((char*) loBuffer + 2);
-				if (*aFoundStringPointer == NULL) {
+			if (aFoundStringPointer != 0)
+			{
+				*aFoundStringPointer = makeString((char *)loBuffer + 2);
+				if (*aFoundStringPointer == NULL)
+				{
 					printf(
-							"Unable to allocate the space for the string read from the resource string: %d\n",
-							aResourceNumber);
+						"Unable to allocate the space for the string read from the resource string: %d\n",
+						aResourceNumber);
 				}
 			}
 			free(loResEntryHeader);
@@ -1504,10 +1703,12 @@ int getResourceType(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
  Display info entries
  */
 void displayResourcesInfoEntries(FILE *aOutputFile,
-		RESINFOPOINTER *aResourcesInfoTable) {
+								 RESINFOPOINTER *aResourcesInfoTable)
+{
 	int i;
 
-	if (aResourcesInfoTable == NULL) {
+	if (aResourcesInfoTable == NULL)
+	{
 		printf("The resources info table is NULL!\n");
 		return;
 	}
@@ -1520,8 +1721,9 @@ void displayResourcesInfoEntries(FILE *aOutputFile,
 			"NUM", "TYPE", "NAME", "INFO1 (if existing)", "INFO2 (if existing)",
 			"STRING_VALUE (for strings, in \"\")");
 	for (i = 0;
-			i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aResourcesInfoTable[i] != NULL;
-			i++) {
+		 i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aResourcesInfoTable[i] != NULL;
+		 i++)
+	{
 		char loType[256];
 		char *loName;
 		int loNumber;
@@ -1535,26 +1737,30 @@ void displayResourcesInfoEntries(FILE *aOutputFile,
 		loInfoFromResource1 = aResourcesInfoTable[i]->infoFromResource1;
 		loInfoFromResource2 = aResourcesInfoTable[i]->infoFromResource2;
 		loStringValue = aResourcesInfoTable[i]->stringValue;
-		if (loInfoFromResource1 != NULL || loInfoFromResource1 != NULL) {
+		if (loInfoFromResource1 != NULL || loInfoFromResource1 != NULL)
+		{
 			loAdditionalInfoPresent = true;
 		}
 		// basic info
 		fprintf(aOutputFile, "%-5d %-10s %-45s %s\n", loNumber, loType, loName,
-				((loAdditionalInfoPresent == true || loStringValue != NULL) ?
-						"(see below)" : ""));
+				((loAdditionalInfoPresent == true || loStringValue != NULL) ? "(see below)" : ""));
 
-		if (loAdditionalInfoPresent == true) {
+		if (loAdditionalInfoPresent == true)
+		{
 			fprintf(aOutputFile, "               %s\n               %s\n",
 					((loInfoFromResource1 == NULL) ? "-" : loInfoFromResource1),
 					((loInfoFromResource2 == NULL) ? "-" : loInfoFromResource2));
 		}
-		if (loStringValue != NULL) {
+		if (loStringValue != NULL)
+		{
 			int i;
 			int loStringValueLength;
 			loStringValueLength = strlen(loStringValue);
 			fprintf(aOutputFile, "String value: \"");
-			for (i = 0; i < loStringValueLength; i++) {
-				switch (loStringValue[i]) {
+			for (i = 0; i < loStringValueLength; i++)
+			{
+				switch (loStringValue[i])
+				{
 				case '\n':
 					fprintf(aOutputFile, "%s", "\\n");
 					break;
@@ -1562,7 +1768,7 @@ void displayResourcesInfoEntries(FILE *aOutputFile,
 					fprintf(aOutputFile, "%s", "\\r");
 					break;
 				case '\t':
-					fprintf(aOutputFile, "%s", "\\t"); //TODO: %s was original t, check this
+					fprintf(aOutputFile, "%s", "\\t"); // TODO: %s was original t, check this
 					break;
 				case '\"':
 					fprintf(aOutputFile, "%s", "\\\"");
@@ -1576,9 +1782,9 @@ void displayResourcesInfoEntries(FILE *aOutputFile,
 				}
 			}
 			fprintf(aOutputFile, "\"\n");
-
 		}
-		if (loAdditionalInfoPresent == true || loStringValue != NULL) {
+		if (loAdditionalInfoPresent == true || loStringValue != NULL)
+		{
 			// one more empty line
 			fprintf(aOutputFile, "\n");
 		}
@@ -1588,8 +1794,10 @@ void displayResourcesInfoEntries(FILE *aOutputFile,
 /*
  Get resource entry type name
  */
-void getResourceTypeString(char* aResult, int aType) {
-	switch (aType) {
+void getResourceTypeString(char *aResult, int aType)
+{
+	switch (aType)
+	{
 	case RESOURCE_TYPE_UNKNOWN:
 		strcpy(aResult, "unknown");
 		break;
@@ -1636,22 +1844,24 @@ void getResourceTypeString(char* aResult, int aType) {
 /*
  Display a resource type warning
  */
-void displayResourcesTypeWarning(FILE *aOutputFile) {
+void displayResourcesTypeWarning(FILE *aOutputFile)
+{
 	fprintf(aOutputFile,
 			"\nWarnings:"
-					"\na) The type of some resources is determined by the extension of the original file\n"
-					"(this may be not be precise, the AESOP does not enforce any naming conventions!):\n"
-					"bitmap(.BMP, .SHP), sound (.SND), music (.XMI), font(.FNT).\n");
+			"\na) The type of some resources is determined by the extension of the original file\n"
+			"(this may be not be precise, the AESOP does not enforce any naming conventions!):\n"
+			"bitmap(.BMP, .SHP), sound (.SND), music (.XMI), font(.FNT).\n");
 	fprintf(aOutputFile,
 			"b) The type of code/import/export resources is determined by the extensions\n"
-					".IMPT/.EXPT of names of import/export resources.\n");
+			".IMPT/.EXPT of names of import/export resources.\n");
 }
 
 /*
  Displays resource type summary
  */
 void displayResourcesTypeSummary(RESINFOPOINTER *aResourcesInfoTable,
-		FILE *aOutputFile) {
+								 FILE *aOutputFile)
+{
 	int i;
 	int loUnknown = 0;
 	int loSpecial = 0;
@@ -1669,10 +1879,12 @@ void displayResourcesTypeSummary(RESINFOPOINTER *aResourcesInfoTable,
 	fprintf(aOutputFile,
 			"\nThe numbers of resources of different types in the file:\n");
 	for (i = 0;
-			i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aResourcesInfoTable[i] != NULL;
-			i++) {
+		 i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aResourcesInfoTable[i] != NULL;
+		 i++)
+	{
 		int loResourceType = aResourcesInfoTable[i]->resourceType;
-		switch (loResourceType) {
+		switch (loResourceType)
+		{
 		case RESOURCE_TYPE_UNKNOWN:
 			loUnknown++;
 			break;
@@ -1711,8 +1923,8 @@ void displayResourcesTypeSummary(RESINFOPOINTER *aResourcesInfoTable,
 			break;
 		default:
 			printf(
-					"displayResourcesTypeSummary(): unexpected resource type %d!\n",
-					loResourceType);
+				"displayResourcesTypeSummary(): unexpected resource type %d!\n",
+				loResourceType);
 			break;
 		}
 	}
@@ -1730,4 +1942,3 @@ void displayResourcesTypeSummary(RESINFOPOINTER *aResourcesInfoTable,
 	fprintf(aOutputFile, "%10s    %d\n", "map", loMap);
 	fprintf(aOutputFile, "\n");
 }
-

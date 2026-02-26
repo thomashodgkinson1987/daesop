@@ -7,23 +7,23 @@
 
 // constants from the disassembly map (they must be < 127)
 // data
-#define MAP_DATA_BYTE        0
-#define MAP_DATA_WORD        1
-#define MAP_DATA_LONG        2
-#define MAP_DATA_STRING      3
-#define MAP_DATA_CONTINUE    4
+#define MAP_DATA_BYTE 0
+#define MAP_DATA_WORD 1
+#define MAP_DATA_LONG 2
+#define MAP_DATA_STRING 3
+#define MAP_DATA_CONTINUE 4
 #define MAP_BYTE_TABLE_START 5
 #define MAP_WORD_TABLE_START 6
 #define MAP_LONG_TABLE_START 7
 // message handler entries
-#define MAP_MESSAGE_HANDLER_NOT_DONE    10
-#define MAP_MESSAGE_HANDLER_PROCESSED   11
+#define MAP_MESSAGE_HANDLER_NOT_DONE 10
+#define MAP_MESSAGE_HANDLER_PROCESSED 11
 // code
-#define MAP_CODE_START_NOT_DONE  20
+#define MAP_CODE_START_NOT_DONE 20
 #define MAP_CODE_START_PROCESSED 21
-#define MAP_CODE_PROCESSED       22
+#define MAP_CODE_PROCESSED 22
 // procedures
-#define MAP_PROCEDURE_START_NOT_DONE  30
+#define MAP_PROCEDURE_START_NOT_DONE 30
 #define MAP_PROCEDURE_START_PROCESSED 31
 // special data
 #define MAP_SPECIAL 40

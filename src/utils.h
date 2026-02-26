@@ -12,4 +12,3 @@ int stringEndsWith(char *aFullString, const char *aEndString);
 int copyFile(FILE *aSourceFile, char *aNewFileName);
 
 #endif
-
