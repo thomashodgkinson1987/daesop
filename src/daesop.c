@@ -1928,6 +1928,7 @@ int extractAllResources(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 					   char *aOutputDirectory)
 {
 	DICTENTRYPOINTER *loResourceNameArray;
+	RESINFOPOINTER *loResourcesInfoTable;
 	int loNumberOfResources;
 	int i;
 	int loDirBlockNumber;
@@ -1938,6 +1939,7 @@ int extractAllResources(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 	FILE *loOutputFile;
 	char loFullFileName[1024];
 	char loResourceName[256];
+	char loResourcePath[256];
 	int loExtractedCount = 0;
 	int loSkippedCount = 0;
 
@@ -1955,6 +1957,9 @@ int extractAllResources(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 		printf("Error: Unable to read resource name array!\n");
 		return false;
 	}
+
+	loResourcesInfoTable = getResourcesInformationTable(aResFile, aDirectoryPointers,
+													   false);
 
 	loNumberOfResources = getNumberOfItems(loResourceNameArray);
 	printf("Total resources to extract: %d\n", loNumberOfResources);
@@ -1987,8 +1992,69 @@ int extractAllResources(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 
 		if (getResourceName(loResourceName, i) != NULL)
 		{
-			snprintf(loFullFileName, sizeof(loFullFileName), "%s/%s",
-					aOutputDirectory, loResourceName);
+			char loFileName[256];
+			char loDirPath[256] = "";
+			char loFullDirPath[1024];
+			char *loLastSlash;
+
+			strcpy(loFileName, loResourceName);
+			for (char *p = loFileName; *p; p++)
+			{
+				if (*p == '/' || *p == '\\') *p = '_';
+			}
+
+			if (loResourcesInfoTable != NULL)
+			{
+				for (int j = 0; j < MAX_NUMBER_OF_DICTIONARY_ITEMS && loResourcesInfoTable[j] != NULL; j++)
+				{
+					if (loResourcesInfoTable[j]->number == i && loResourcesInfoTable[j]->infoFromResource2 != NULL)
+					{
+						char *loInfo = loResourcesInfoTable[j]->infoFromResource2;
+						for (char *p = loInfo; *p; p++)
+						{
+							if (*p == '\\') *p = '/';
+						}
+						loLastSlash = strrchr(loInfo, '/');
+						if (loLastSlash != NULL)
+						{
+							strncpy(loDirPath, loInfo, loLastSlash - loInfo);
+							loDirPath[loLastSlash - loInfo] = '\0';
+						}
+						break;
+					}
+				}
+			}
+
+			if (strlen(loDirPath) > 0)
+			{
+				char loDirPathCopy[256];
+				strcpy(loDirPathCopy, loDirPath);
+				char *loToken = strtok(loDirPathCopy, "/");
+				char loCurrentPath[256] = "";
+				while (loToken != NULL)
+				{
+					if (strlen(loCurrentPath) > 0)
+					{
+						strcat(loCurrentPath, "/");
+					}
+					strcat(loCurrentPath, loToken);
+					snprintf(loFullDirPath, sizeof(loFullDirPath), "%s/%s", 
+							aOutputDirectory, loCurrentPath);
+#if defined(_WIN32) || defined(_WIN64)
+					_mkdir(loFullDirPath);
+#else
+					mkdir(loFullDirPath, 0755);
+#endif
+					loToken = strtok(NULL, "/");
+				}
+				snprintf(loFullFileName, sizeof(loFullFileName), "%s/%s/%s",
+						aOutputDirectory, loDirPath, loFileName);
+			}
+			else
+			{
+				snprintf(loFullFileName, sizeof(loFullFileName), "%s/%s",
+						aOutputDirectory, loFileName);
+			}
 		}
 		else
 		{
