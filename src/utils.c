@@ -1,9 +1,10 @@
+#include <stdbool.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
-#include "utils.hpp"
+#include "utils.h"
 
 /*
  Allocate a string

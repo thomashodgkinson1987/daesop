@@ -1,6 +1,8 @@
 #ifndef RESSTR_H
 #define RESSTR_H
 
+#include <stdio.h>
+
 #define AESOP_ID "AESOP/16 V1.00"
 
 #define DIRECTORY_BLOCK_ITEMS 128

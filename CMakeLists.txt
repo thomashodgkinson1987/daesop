@@ -1,21 +1,21 @@
 cmake_minimum_required(VERSION 3.10)
-project(daesop VERSION 1.0.0)
+project(daesop VERSION 0.87.0 LANGUAGES C)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
 include_directories(src)
 
 set(SOURCES
-    src/convert.cpp
-    src/daesop.cpp
-    src/damap.cpp
-    src/dasm.cpp
-    src/dblocks.cpp
-    src/dict.cpp
-    src/dvar.cpp
-    src/rentry.cpp
-    src/utils.cpp
+    src/convert.c
+    src/daesop.c
+    src/damap.c
+    src/dasm.c
+    src/dblocks.c
+    src/dict.c
+    src/dvar.c
+    src/rentry.c
+    src/utils.c
 )
 
 add_executable(daesop ${SOURCES})

@@ -1,14 +1,15 @@
+#include <stdbool.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "resstr.hpp"
-#include "rentry.hpp"
-#include "dblocks.hpp"
-#include "dict.hpp"
-#include "utils.hpp"
+#include "resstr.h"
+#include "rentry.h"
+#include "dblocks.h"
+#include "dict.h"
+#include "utils.h"
 
-#include "convert.hpp"
+#include "convert.h"
 
 // set this to get more information about font conversion
 //#define FONT_CONVERSION_DEBUG

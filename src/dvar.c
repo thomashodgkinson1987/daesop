@@ -1,12 +1,13 @@
+#include <stdbool.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "dasm.hpp"
-#include "damap.hpp"
+#include "dasm.h"
+#include "damap.h"
 
-#include "dvar.hpp"
+#include "dvar.h"
 
 // static variables
 STATVARPOINTER *myStaticVariablesTable = NULL;

@@ -1,14 +1,15 @@
+#include <stdbool.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#include "utils.hpp"
-#include "damap.hpp"
-#include "dvar.hpp"
+#include "utils.h"
+#include "damap.h"
+#include "dvar.h"
 
-#include "dasm.hpp"
+#include "dasm.h"
 
 BYTECODEPOINTER *bytecodeTable = NULL;
 

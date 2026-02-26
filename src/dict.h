@@ -1,7 +1,7 @@
 #ifndef DICT_H
 #define DICT_H
 
-#include "resstr.hpp"
+#include "resstr.h"
 
 // just a sensible value to check when working with dictionaries
 #define MAX_NUMBER_OF_DICTIONARY_ITEMS 30000

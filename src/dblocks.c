@@ -1,9 +1,10 @@
+#include <stdbool.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "dblocks.hpp"
+#include "dblocks.h"
 
 /*
  Read directory blocks

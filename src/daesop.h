@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-#include "resstr.hpp"
-#include "dict.hpp"
+#include "resstr.h"
+#include "dict.h"
 
 #define NOTHING                             0
 #define GET_INFORMATION                     1

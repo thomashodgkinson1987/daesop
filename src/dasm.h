@@ -1,7 +1,7 @@
 #ifndef DASM_H
 #define DASM_H
 
-#include "dict.hpp"
+#include "dict.h"
 
 #define MAX_BYTECODES 256
 #define BYTECODE_DEFINITION_FILE "bytecode.def"

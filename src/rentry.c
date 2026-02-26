@@ -1,8 +1,9 @@
+#include <stdbool.h>
 #include <malloc.h>
 
-#include "dblocks.hpp"
+#include "dblocks.h"
 
-#include "rentry.hpp"
+#include "rentry.h"
 
 /*
  Get the file index of the specified resource (including the resource header)

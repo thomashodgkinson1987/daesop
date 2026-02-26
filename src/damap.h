@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "utils.hpp"
+#include "utils.h"
 
 // constants from the disassembly map (they must be < 127)
 // data

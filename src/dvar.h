@@ -1,7 +1,7 @@
 #ifndef DVAR_H
 #define DVAR_H
 
-#include "dict.hpp"
+#include "dict.h"
 
 #define MAX_STATIC_VARIABLES 1000
 #define MAX_CONSTANT_TABLES 1000

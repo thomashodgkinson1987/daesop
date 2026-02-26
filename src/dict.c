@@ -1,12 +1,13 @@
+#include <stdbool.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "utils.hpp"
-#include "rentry.hpp"
+#include "utils.h"
+#include "rentry.h"
 
-#include "dict.hpp"
+#include "dict.h"
 
 int readDictionaryStringList(DICTENTRYPOINTER *aDictionaryArray,
 		int aMaxDictionaryEntries, int *aCurrentIndexInDictionary,

@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "resstr.hpp"
+#include "resstr.h"
 
 int readDirectoryBlocks(FILE *aResFile, DIRPOINTER * loDirectoryPointers);
 int getNumberOfDirectoryBlocks(DIRPOINTER *aDirectoryPointers);

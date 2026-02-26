@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "resstr.hpp"
+#include "resstr.h"
 
 long getResourceEntryIndex(int i, DIRPOINTER * loDirectoryPointers);
 struct RESEntryHeader *getResourceEntryHeader(int aNumber, FILE *aResFile,
