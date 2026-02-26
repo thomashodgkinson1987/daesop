@@ -1,1 +1,12 @@
 !build/
+!*.RES
+!bytecode.def
+!output-i.txt
+!output-ir.txt
+!output-j-start.txt
+!output-k-2388.txt
+!output-create_tbl.bin
+!output-e-start.bin
+!output-eh-start.bin
+!output-x-2388.bin
+!output-xh-2388.bin

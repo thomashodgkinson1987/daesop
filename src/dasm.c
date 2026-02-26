@@ -19,7 +19,7 @@ BYTECODEPOINTER *bytecodeTable = NULL;
 BYTECODEPOINTER *readBytecodeDefinition(void)
 {
 	FILE *loDefinitionFile;
-	char loDefinitionFilePath[256];
+	char loDefinitionFilePath[256] = "";
 	char loLine[256];
 	int loBytecodeTableSize;
 
