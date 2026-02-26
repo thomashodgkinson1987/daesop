@@ -26,6 +26,7 @@
 #define CONVERT_OLD_FONTS_IGNORE_ERRORS 17
 #define PATCH_EOB3_MENU 18
 #define CONVERT_EOB3_TO_AESOP32 19
+#define EXTRACT_ALL 20
 
 #define DUMP_LINE_SIZE 16
 
@@ -77,4 +78,6 @@ int patchEOB3Menu(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 				  char *aNewFileName);
 int convertEOB3toAESOP32(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 						 char *aNewFileName);
+int extractAllResources(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
+					   char *aOutputDirectory);
 #endif

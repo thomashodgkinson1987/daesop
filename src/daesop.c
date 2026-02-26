@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/stat.h>
 
 #include "config.h"
 #include "dblocks.h"
@@ -139,6 +140,11 @@ int main(int argc, char *argv[])
 		loFunction = CONVERT_EOB3_TO_AESOP32;
 		loNumberOfRequiredParameters = 1;
 	}
+	else if (strcmp(loFunctionOption, "-extract") == 0)
+	{
+		loFunction = EXTRACT_ALL;
+		loNumberOfRequiredParameters = 1;
+	}
 	else
 	{
 		printf("\nError: Invalid options.\n\n");
@@ -258,6 +264,12 @@ int main(int argc, char *argv[])
 		loResult = convertEOB3toAESOP32(loResFile, loDirectoryPointers,
 										argv[3]);
 	}
+	else if (loFunction == EXTRACT_ALL)
+	{
+		// extract all resources
+		loResult = extractAllResources(loResFile, loDirectoryPointers,
+									  argv[3]);
+	}
 	fclose(loResFile);
 	if (loResult == false)
 	{
@@ -313,6 +325,7 @@ void syntaxInformation(void)
 	printf("  -eob3menupatch	: patches the <res_file> to work with AESOP/32\n");
 	printf(
 		"  -eob3conv		: same as using commands /cob, /cof and /eob3menupatch\n");
+	printf("  -extract		: extracts all resources to the <output_directory>\n");
 	printf("  \n");
 	printf("Examples:  \n");
 	printf("  daesop -i EYE.RES info.txt\n");
@@ -1906,4 +1919,101 @@ int convertEOB3toAESOP32(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 		printf("Warning: no font conversions were done!\n");
 	}
 	return (true);
+}
+
+/*
+ Extract all resources to a directory
+ */
+int extractAllResources(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
+					   char *aOutputDirectory)
+{
+	DICTENTRYPOINTER *loResourceNameArray;
+	int loNumberOfResources;
+	int i;
+	int loDirBlockNumber;
+	int loNumberInDirBlock;
+	DIRPOINTER loCurrentDirectoryBlock;
+	unsigned char *loResourceBuffer;
+	int loResourceLength;
+	FILE *loOutputFile;
+	char loFullFileName[1024];
+	char loResourceName[256];
+	int loExtractedCount = 0;
+	int loSkippedCount = 0;
+
+	printf("Extracting all resources to directory: %s\n", aOutputDirectory);
+
+#if defined(_WIN32) || defined(_WIN64)
+	_mkdir(aOutputDirectory);
+#else
+	mkdir(aOutputDirectory, 0755);
+#endif
+
+	loResourceNameArray = getResourceNameArray(aResFile, aDirectoryPointers);
+	if (loResourceNameArray == NULL)
+	{
+		printf("Error: Unable to read resource name array!\n");
+		return false;
+	}
+
+	loNumberOfResources = getNumberOfItems(loResourceNameArray);
+	printf("Total resources to extract: %d\n", loNumberOfResources);
+
+	for (i = 0; i < loNumberOfResources; i++)
+	{
+		loDirBlockNumber = i / DIRECTORY_BLOCK_ITEMS;
+		loNumberInDirBlock = i % DIRECTORY_BLOCK_ITEMS;
+
+		loCurrentDirectoryBlock = aDirectoryPointers[loDirBlockNumber];
+		if (loCurrentDirectoryBlock == NULL)
+		{
+			continue;
+		}
+
+		if (loCurrentDirectoryBlock->data_attributes[loNumberInDirBlock] == 1)
+		{
+			loSkippedCount++;
+			continue;
+		}
+
+		loResourceBuffer = readResourceBinary(i, aResFile, aDirectoryPointers,
+											&loResourceLength);
+		if (loResourceBuffer == NULL)
+		{
+			printf("Warning: Could not read resource %d\n", i);
+			loSkippedCount++;
+			continue;
+		}
+
+		if (getResourceName(loResourceName, i) != NULL)
+		{
+			snprintf(loFullFileName, sizeof(loFullFileName), "%s/%s",
+					aOutputDirectory, loResourceName);
+		}
+		else
+		{
+			snprintf(loFullFileName, sizeof(loFullFileName), "%s/resource_%d",
+					aOutputDirectory, i);
+		}
+
+		loOutputFile = fopen(loFullFileName, "wb");
+		if (loOutputFile == NULL)
+		{
+			printf("Error: Could not create file: %s\n", loFullFileName);
+			free(loResourceBuffer);
+			continue;
+		}
+
+		fwrite(loResourceBuffer, 1, loResourceLength, loOutputFile);
+		fclose(loOutputFile);
+		free(loResourceBuffer);
+
+		printf("Extracted: %s (%d bytes)\n", loFullFileName, loResourceLength);
+		loExtractedCount++;
+	}
+
+	printf("Extraction complete: %d resources extracted, %d skipped\n",
+		   loExtractedCount, loSkippedCount);
+
+	return true;
 }
