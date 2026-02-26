@@ -1,5 +1,4 @@
 #include <stdbool.h>
-#include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -168,14 +167,15 @@ DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
 	for (i = 0; i < loDictionaryStringListsNumber; i++)
 	{
 		// DICTIONARY_ENTRY + sizeof(number_of_string_lists) + i * sizeof(list_index_entry)
-		if (fseek(aResFile,
-				  loDictionaryStart + sizeof(unsigned short) + i * sizeof(unsigned int), SEEK_SET) != 0)
-		{
-			printf(
-				"Failure to set the file position %ld when reading the dictionary resource %d!\n",
-				loDictionaryStart, aResource);
-			return (NULL);
-		}
+	if (fseek(aResFile,
+			  loDictionaryStart + sizeof(unsigned short) + i * sizeof(unsigned int), SEEK_SET) != 0)
+	{
+		printf(
+			"Failure to set the file position %ld when reading the dictionary resource %d!\n",
+			loDictionaryStart, aResource);
+		free(loDictionaryArray);
+		return (NULL);
+	}
 
 		// printf("seek: %d\n", loDictionaryStart + sizeof(unsigned short) + i * sizeof(unsigned int));
 
@@ -186,6 +186,7 @@ DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
 			printf(
 				"Failure to read a string list index from the dictionary resource %d!\n",
 				aResource);
+			free(loDictionaryArray);
 			return (NULL);
 		}
 
@@ -194,13 +195,14 @@ DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
 			// not empty
 			loStringListIndex += loDictionaryStart; // add the start of the index table to get the real offset
 			// printf("loStringListIndex: %u\n",loStringListIndex);
-			if (readDictionaryStringList(loDictionaryArray,
-										 aMaxDictionaryEntries, &loCurrentIndexInDictionary,
-										 aResFile, loStringListIndex) != true)
+		if (readDictionaryStringList(loDictionaryArray,
+									 aMaxDictionaryEntries, &loCurrentIndexInDictionary,
+									 aResFile, loStringListIndex) != true)
 			{
 				// something failed
 				printf("Error while reading dictionary resource: %d\n",
 					   aResource);
+				free(loDictionaryArray);
 				return (NULL);
 			}
 		}

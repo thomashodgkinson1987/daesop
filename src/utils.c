@@ -1,5 +1,5 @@
 #include <stdbool.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -81,12 +81,12 @@ char getCharacterForDump(char aChar)
 /*
  Checks whether the one string ends with another string (case insensitive)
  */
-int stringEndsWith(char *aFullString, const char *aEndString)
+int stringEndsWith(const char *aFullString, const char *aEndString)
 {
 	int loFullStringLength;
 	int loEndStringLength;
 	int loResult = false;
-	char *loFullStringEndPointer;
+	const char *loFullStringEndPointer;
 
 	if (aFullString == NULL || aEndString == NULL)
 	{
@@ -113,7 +113,7 @@ int stringEndsWith(char *aFullString, const char *aEndString)
 /*
  Copy the file into a new file
  */
-int copyFile(FILE *aSourceFile, char *aNewFileName)
+int copyFile(FILE *aSourceFile, const char *aNewFileName)
 {
 	FILE *loNewFile;
 	unsigned int loReadSize;

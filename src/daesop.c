@@ -1,19 +1,18 @@
 #include "daesop.h"
 
 #include <stdbool.h>
-#include <malloc.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <sys/stat.h>
 
 #include "config.h"
-#include "dblocks.h"
-#include "utils.h"
-#include "rentry.h"
-#include "dasm.h"
 #include "convert.h"
+#include "dasm.h"
+#include "dblocks.h"
+#include "rentry.h"
+#include "utils.h"
 
 char myResName[256];
 struct RESGlobalHeader myHeader;

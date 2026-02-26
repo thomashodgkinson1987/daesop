@@ -1,5 +1,5 @@
 #include <stdbool.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #include "dblocks.h"
 
