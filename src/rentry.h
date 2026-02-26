@@ -5,8 +5,8 @@
 
 #include "resstr.h"
 
-long getResourceEntryIndex(int i, DIRPOINTER *loDirectoryPointers);
-struct RESEntryHeader *getResourceEntryHeader(int aNumber, FILE *aResFile,
+long get_resource_entry_index(int i, DIRPOINTER *loDirectoryPointers);
+struct RESEntryHeader *get_resource_entry_header(int aNumber, FILE *aResFile,
 											  DIRPOINTER *aDirectoryPointers);
 int getMaxNumberOfResourceEntries(DIRPOINTER *aDirectoryPointers);
 unsigned char *readResourceBinary(int aResourceNumber, FILE *aResFile,

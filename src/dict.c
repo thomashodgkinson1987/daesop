@@ -122,7 +122,7 @@ DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
 	}
 
 	// now read the resource header
-	loDictionaryResourceHeader = getResourceEntryHeader(aResource, aResFile,
+	loDictionaryResourceHeader = get_resource_entry_header(aResource, aResFile,
 														aDirectoryPointers);
 	if (loDictionaryResourceHeader == NULL)
 	{
@@ -139,7 +139,7 @@ DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
 		*aResourceSize = loDictionaryResourceHeader->data_size;
 	}
 
-	loDictionaryStart = getResourceEntryIndex(aResource, aDirectoryPointers) + sizeof(struct RESEntryHeader);
+	loDictionaryStart = get_resource_entry_index(aResource, aDirectoryPointers) + sizeof(struct RESEntryHeader);
 	// now read the dictionary entries
 	if (fseek(aResFile, loDictionaryStart, SEEK_SET) != 0)
 	{
@@ -359,7 +359,7 @@ int compareAccordingToFirstString(void const *aFirstItem,
 /*
  Gets the numer of items in the dictionary
  */
-int getNumberOfItems(DICTENTRYPOINTER *aArray)
+int get_number_of_items(DICTENTRYPOINTER *aArray)
 {
 	int loItems = 0;
 	while (aArray[loItems] != NULL)
@@ -385,7 +385,7 @@ int sortDictionaryAccordingToSecondNumber(DICTENTRYPOINTER *aArray)
 		printf("The dictionary array is NULL!\n");
 		return (false);
 	}
-	loItems = getNumberOfItems(aArray);
+	loItems = get_number_of_items(aArray);
 	if (loItems == -1)
 	{
 		printf("Unable to determine the number of items when sorting!");
@@ -407,7 +407,7 @@ int sortDictionaryAccordingToSecondString(DICTENTRYPOINTER *aArray)
 		printf("The dictionary array is NULL!\n");
 		return (false);
 	}
-	loItems = getNumberOfItems(aArray);
+	loItems = get_number_of_items(aArray);
 	if (loItems == -1)
 	{
 		printf("Unable to determine the number of items when sorting!");
@@ -429,7 +429,7 @@ int sortDictionaryAccordingToFirstString(DICTENTRYPOINTER *aArray)
 		printf("The dictionary array is NULL!\n");
 		return (false);
 	}
-	loItems = getNumberOfItems(aArray);
+	loItems = get_number_of_items(aArray);
 	if (loItems == -1)
 	{
 		printf("Unable to determine the number of items when sorting!");
@@ -524,7 +524,7 @@ char *getResourceName(char *aResult, int aResourceNumber)
 		printf("The resource names dictionary was not initialized yet!\n");
 		return (NULL);
 	}
-	loNumberOfItems = getNumberOfItems(myResourceNamesDictionary);
+	loNumberOfItems = get_number_of_items(myResourceNamesDictionary);
 	for (i = 0; i < loNumberOfItems; i++)
 	{
 		char *loNumberString = myResourceNamesDictionary[i]->second;
@@ -550,7 +550,7 @@ char *getResourceName(char *aResult, int aResourceNumber)
 /*
  Get the table with the names of resources
  */
-DICTENTRYPOINTER *getResourceNameArray(FILE *aResFile,
+DICTENTRYPOINTER *get_resource_name_array(FILE *aResFile,
 									   DIRPOINTER *aDirectoryPointers)
 {
 	int loMaxResourceEntries;
@@ -577,7 +577,7 @@ DICTENTRYPOINTER *getResourceNameArray(FILE *aResFile,
 	}
 
 	// add info about 5 special tables
-	loBehindTheEnd = getNumberOfItems(loResult);
+	loBehindTheEnd = get_number_of_items(loResult);
 	storeIntoDictionaryArray(loResult, &loBehindTheEnd,
 							 makeString("Special table 0: Resource names"), makeString("0"));
 	storeIntoDictionaryArray(loResult, &loBehindTheEnd,
@@ -630,7 +630,7 @@ IMPORTENTRYPOINTER *getFullImportArray(DICTENTRYPOINTER *aRawImportArray,
 		printf("The raw import array is NULL!\n");
 		return (NULL);
 	}
-	loNumberOfItems = getNumberOfItems(aRawImportArray);
+	loNumberOfItems = get_number_of_items(aRawImportArray);
 	if (loNumberOfItems == -1)
 	{
 		printf(
@@ -804,7 +804,7 @@ EXPORTENTRYPOINTER *getFullExportArray(DICTENTRYPOINTER *aRawExportArray,
 		printf("The raw export array is NULL!\n");
 		return (NULL);
 	}
-	loNumberOfItems = getNumberOfItems(aRawExportArray);
+	loNumberOfItems = get_number_of_items(aRawExportArray);
 	if (loNumberOfItems == -1)
 	{
 		printf(
@@ -1334,7 +1334,7 @@ char *getMessageName(char *aResult, char *aExportTableString, FILE *aResFile,
 			loNumberString, aExportTableString);
 		return (NULL);
 	}
-	loMessages = getNumberOfItems(myMessageNamesDictionary);
+	loMessages = get_number_of_items(myMessageNamesDictionary);
 	if (loMessages == -1)
 	{
 		printf("Error counting the numbers of messafe name table!\n");
@@ -1390,7 +1390,7 @@ RESINFOPOINTER *getResourcesInformationTable(FILE *aResFile,
 	DICTENTRYPOINTER *loResourceTable1;
 	DICTENTRYPOINTER *loResourceTable2;
 
-	loResourceNameArray = getResourceNameArray(aResFile, aDirectoryPointers);
+	loResourceNameArray = get_resource_name_array(aResFile, aDirectoryPointers);
 	if (loResourceNameArray == NULL)
 	{
 		printf("Unable to read the resource name dictionary (resource 0)!\n");
@@ -1413,21 +1413,21 @@ RESINFOPOINTER *getResourcesInformationTable(FILE *aResFile,
 		return (NULL);
 	}
 
-	loNumberOfResources = getNumberOfItems(loResourceNameArray);
+	loNumberOfResources = get_number_of_items(loResourceNameArray);
 	if (loNumberOfResources == -1)
 	{
 		printf(
 			"Failed to get the number of entries in the table of resource names.\n");
 		return (NULL);
 	}
-	loNumberOfEntriesInTable1 = getNumberOfItems(loResourceTable1);
+	loNumberOfEntriesInTable1 = get_number_of_items(loResourceTable1);
 	if (loNumberOfEntriesInTable1 == -1)
 	{
 		printf(
 			"Failed to get the number of entries in the resource table 1.\n");
 		return (NULL);
 	}
-	loNumberOfEntriesInTable2 = getNumberOfItems(loResourceTable2);
+	loNumberOfEntriesInTable2 = get_number_of_items(loResourceTable2);
 	if (loNumberOfEntriesInTable2 == -1)
 	{
 		printf(
@@ -1655,7 +1655,7 @@ int getResourceType(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 		unsigned int loDataSize;
 		unsigned char *loBuffer;
 		int loDummy;
-		loResEntryHeader = getResourceEntryHeader(aResourceNumber, aResFile,
+		loResEntryHeader = get_resource_entry_header(aResourceNumber, aResFile,
 												  aDirectoryPointers);
 		if (loResEntryHeader == NULL)
 		{

@@ -14,8 +14,8 @@
 // set this to get more information about font conversion
 // #define FONT_CONVERSION_DEBUG
 
-int testOneOldBitmap(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-					 char *aBitmapName, int aBitmapNumber, FILE *aOutputFile)
+int test_one_old_bitmap(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
+						char *aBitmapName, int aBitmapNumber, FILE *aOutputFile)
 {
 	int loResourceSize;
 	unsigned char *loBuffer;
@@ -209,10 +209,10 @@ int testOneOldBitmap(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 /*
  Replaces a resource by a new resource read from a memory buffer (with or without a header)
  */
-int replaceResourceByResourceFromMemory(FILE *aResFile, char *aResourceName,
-										int aResourceNumber, unsigned char *aAddedResourceBuffer,
-										unsigned int aAddedResourceSize, char *aNewFileName,
-										int aNewResourceHasHeader)
+int replace_resource_by_resource_from_memory(FILE *aResFile, char *aResourceName,
+											 int aResourceNumber, unsigned char *aAddedResourceBuffer,
+											 unsigned int aAddedResourceSize, char *aNewFileName,
+											 int aNewResourceHasHeader)
 {
 	FILE *loNewFile;
 	int loResult;
@@ -233,8 +233,8 @@ int replaceResourceByResourceFromMemory(FILE *aResFile, char *aResourceName,
 	}
 
 	// open the copied file and read the header
-	loNewFile = openAESOPResourceAndSetToFirstDirectoryBlock(aNewFileName,
-															 "r+b", &loNewFileHeader);
+	loNewFile = open_aesop_resource_and_set_to_first_directory_block(aNewFileName,
+																	 "r+b", &loNewFileHeader);
 	if (loNewFile == NULL)
 	{
 		printf("The file could not be opened: %s!\n", aNewFileName);
@@ -242,17 +242,17 @@ int replaceResourceByResourceFromMemory(FILE *aResFile, char *aResourceName,
 	}
 
 	// read the directory
-	if (readDirectoryBlocks(loNewFile, loNewFileDirectoryPointers) == false)
+	if (read_directory_blocks(loNewFile, loNewFileDirectoryPointers) == false)
 	{
 		printf("The reading of directory blocks in the new file failed!\n");
 		fclose(loNewFile);
 		return (false);
 	}
 
-	loResult = replaceResourceInOpenedFile(aResourceName, aResourceNumber,
-										   aAddedResourceBuffer, aAddedResourceSize, loNewFile,
-										   &loNewFileHeader, loNewFileDirectoryPointers,
-										   aNewResourceHasHeader);
+	loResult = replace_resource_in_opened_file(aResourceName, aResourceNumber,
+											   aAddedResourceBuffer, aAddedResourceSize, loNewFile,
+											   &loNewFileHeader, loNewFileDirectoryPointers,
+											   aNewResourceHasHeader);
 	fclose(loNewFile);
 	return (loResult);
 }
@@ -260,10 +260,10 @@ int replaceResourceByResourceFromMemory(FILE *aResFile, char *aResourceName,
 /*
  Replace one resource in an opened file aNewFile
  */
-int replaceResourceInOpenedFile(char *aResourceName, int aResourceNumber,
-								unsigned char *aAddedResourceBuffer, unsigned int aAddedResourceSize,
-								FILE *aNewFile, struct RESGlobalHeader *aNewFileHeader,
-								DIRPOINTER *aNewFileDirectoryPointers, int aNewResourceHasHeader)
+int replace_resource_in_opened_file(char *aResourceName, int aResourceNumber,
+									unsigned char *aAddedResourceBuffer, unsigned int aAddedResourceSize,
+									FILE *aNewFile, struct RESGlobalHeader *aNewFileHeader,
+									DIRPOINTER *aNewFileDirectoryPointers, int aNewResourceHasHeader)
 {
 	int loNewFileLength;
 	int loNewFileOriginalLength;
@@ -284,8 +284,8 @@ int replaceResourceInOpenedFile(char *aResourceName, int aResourceNumber,
 		struct RESEntryHeader *loResEntryHeader;
 		unsigned int loResourceHeaderSize = sizeof(struct RESEntryHeader);
 
-		loResEntryHeader = getResourceEntryHeader(aResourceNumber, aNewFile,
-												  aNewFileDirectoryPointers);
+		loResEntryHeader = get_resource_entry_header(aResourceNumber, aNewFile,
+													 aNewFileDirectoryPointers);
 		if (loResEntryHeader == NULL)
 		{
 			printf(
@@ -374,9 +374,9 @@ int replaceResourceInOpenedFile(char *aResourceName, int aResourceNumber,
  Converts the bitmap resource aResourceNumber from old (EOB 3) format to the new (AESOP/32) format
  (changes the resource file)
  */
-int convertOneOldBitmap(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
-						struct RESGlobalHeader *aNewFileHeader, int aResourceNumber,
-						char *aResourceName)
+int convert_one_old_bitmap(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
+						   struct RESGlobalHeader *aNewFileHeader, int aResourceNumber,
+						   char *aResourceName)
 {
 	unsigned char *loOldResourceBuffer;
 	int loOldResourceLength;
@@ -394,8 +394,8 @@ int convertOneOldBitmap(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
 	}
 
 	// get the converted bitmap
-	loNewResourceBuffer = getNewBitmapForOldBitmap(loOldResourceBuffer,
-												   loOldResourceLength, &loNewResourceLength);
+	loNewResourceBuffer = get_new_bitmap_for_old_bitmap(loOldResourceBuffer,
+														loOldResourceLength, &loNewResourceLength);
 	if (loNewResourceBuffer == NULL)
 	{
 		printf(
@@ -411,9 +411,9 @@ int convertOneOldBitmap(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
 	}
 
 	// replace the old bitmap by a new one
-	if (replaceResourceInOpenedFile(aResourceName, aResourceNumber,
-									loNewResourceBuffer, loNewResourceLength, aNewFile, aNewFileHeader,
-									aNewFileDirectoryPointers, false) == false)
+	if (replace_resource_in_opened_file(aResourceName, aResourceNumber,
+										loNewResourceBuffer, loNewResourceLength, aNewFile, aNewFileHeader,
+										aNewFileDirectoryPointers, false) == false)
 	{
 		printf(
 			"Failed to replace the old bitmap by a new one (resource number %d)!\n",
@@ -431,8 +431,8 @@ int convertOneOldBitmap(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
 /*
  Convert the old bitmap to a new one
  */
-unsigned char *getNewBitmapForOldBitmap(unsigned char *aOldResourceBuffer,
-										unsigned int aOldResourceLength, int *aNewResourceLength)
+unsigned char *get_new_bitmap_for_old_bitmap(unsigned char *aOldResourceBuffer,
+											 unsigned int aOldResourceLength, int *aNewResourceLength)
 {
 	unsigned char *loNewBitmapBuffer = NULL;
 	int loNewBitmapBufferLength = 0;
@@ -464,8 +464,8 @@ unsigned char *getNewBitmapForOldBitmap(unsigned char *aOldResourceBuffer,
 	}
 
 	// allocate the space for a new bitmap
-	loNewBitmapBuffer = allocateNewBitmapBuffer(loOldBitmapHeaderSize,
-												&loNewBitmapBufferLength);
+	loNewBitmapBuffer = allocate_new_bitmap_buffer(loOldBitmapHeaderSize,
+												   &loNewBitmapBufferLength);
 	if (loNewBitmapBuffer == NULL)
 	{
 		printf("Error: failure to allocate a new bitmap buffer!\n");
@@ -474,8 +474,8 @@ unsigned char *getNewBitmapForOldBitmap(unsigned char *aOldResourceBuffer,
 	}
 
 	// create new header
-	if (prepareNewBitmapGlobalHeader(loNewBitmapBuffer, loNewBitmapBufferLength,
-									 &loNewBitmapBufferPointer, loSubPictures) == false)
+	if (prepare_new_bitmap_global_header(loNewBitmapBuffer, loNewBitmapBufferLength,
+										 &loNewBitmapBufferPointer, loSubPictures) == false)
 	{
 		printf("Failure while generating the new bitmap global header\n");
 		free(loOldStartOffsets);
@@ -491,11 +491,11 @@ unsigned char *getNewBitmapForOldBitmap(unsigned char *aOldResourceBuffer,
 		printf("    Sub picture 0x%04x starts at offset 0x%08x\n", i,
 			   loOldPictureStart);
 		// store the pointer to the subpicture
-		storeNewBitmapSubpicturePointer(loNewBitmapBuffer, i,
-										(unsigned int)loNewBitmapBufferPointer);
-		if (convertOneOldSubpicture(aOldResourceBuffer, aOldResourceLength,
-									loOldPictureStart, loNewBitmapBuffer, loNewBitmapBufferLength,
-									&loNewBitmapBufferPointer) == false)
+		store_new_bitmap_subpicture_pointer(loNewBitmapBuffer, i,
+											(unsigned int)loNewBitmapBufferPointer);
+		if (convert_one_old_subpicture(aOldResourceBuffer, aOldResourceLength,
+									   loOldPictureStart, loNewBitmapBuffer, loNewBitmapBufferLength,
+									   &loNewBitmapBufferPointer) == false)
 		{
 			printf("Failure while processing the subpicture %d!\n", i);
 			free(loOldStartOffsets);
@@ -513,8 +513,8 @@ unsigned char *getNewBitmapForOldBitmap(unsigned char *aOldResourceBuffer,
 /*
  Allocate a big buffer for the new bitmap
  */
-unsigned char *allocateNewBitmapBuffer(int aOldBitmapHeaderSize,
-									   int *aNewBitmapBufferLength)
+unsigned char *allocate_new_bitmap_buffer(int aOldBitmapHeaderSize,
+										  int *aNewBitmapBufferLength)
 {
 	int loAllocatedSize;
 	unsigned char *loResult;
@@ -537,9 +537,9 @@ unsigned char *allocateNewBitmapBuffer(int aOldBitmapHeaderSize,
 /*
  Prepare new bitmap header
  */
-int prepareNewBitmapGlobalHeader(unsigned char *aNewBitmapBuffer,
-								 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
-								 int aSubpictures)
+int prepare_new_bitmap_global_header(unsigned char *aNewBitmapBuffer,
+									 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
+									 int aSubpictures)
 {
 	struct NEW_BITMAP_GLOBAL_HEADER loHeader;
 	int loNeededSize;
@@ -571,8 +571,8 @@ int prepareNewBitmapGlobalHeader(unsigned char *aNewBitmapBuffer,
 /*
  Store a pointer to a subpicture
  */
-void storeNewBitmapSubpicturePointer(unsigned char *aNewBitmapBuffer,
-									 int aIndex, unsigned int aPointer)
+void store_new_bitmap_subpicture_pointer(unsigned char *aNewBitmapBuffer,
+										 int aIndex, unsigned int aPointer)
 {
 	int loPos = sizeof(struct NEW_BITMAP_GLOBAL_HEADER) + (aIndex * (4 + 4));
 	printf("    Storing a subpicture pointer %d to the position %d.\n",
@@ -584,9 +584,9 @@ void storeNewBitmapSubpicturePointer(unsigned char *aNewBitmapBuffer,
 
  Prepare new subpicture header
  */
-int prepareNewBitmapSubpictureHeader(unsigned char *aNewBitmapBuffer,
-									 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer, int aWidth,
-									 int aHeight)
+int prepare_new_bitmap_subpicture_header(unsigned char *aNewBitmapBuffer,
+										 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer, int aWidth,
+										 int aHeight)
 {
 	struct NEW_BITMAP_SUBPICTURE_HEADER loHeader;
 	int loNewPointerValue;
@@ -620,10 +620,10 @@ int prepareNewBitmapSubpictureHeader(unsigned char *aNewBitmapBuffer,
 /*
  Process one old subpicture
  */
-int convertOneOldSubpicture(unsigned char *aOldResourceBuffer,
-							int aOldResourceBufferLength, unsigned int aOldPictureStart,
-							unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-							int *aNewBitmapBufferPointer)
+int convert_one_old_subpicture(unsigned char *aOldResourceBuffer,
+							   int aOldResourceBufferLength, unsigned int aOldPictureStart,
+							   unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
+							   int *aNewBitmapBufferPointer)
 {
 	unsigned int loPos;
 	int loWidth;
@@ -651,8 +651,8 @@ int convertOneOldSubpicture(unsigned char *aOldResourceBuffer,
 	loPos += 4;
 	printf("    Image size is %dx%d\n", loWidth, loHeight);
 
-	if (prepareNewBitmapSubpictureHeader(aNewBitmapBuffer,
-										 aNewBitmapBufferLength, aNewBitmapBufferPointer, loWidth, loHeight) == false)
+	if (prepare_new_bitmap_subpicture_header(aNewBitmapBuffer,
+											 aNewBitmapBufferLength, aNewBitmapBufferPointer, loWidth, loHeight) == false)
 	{
 		printf("Failure while generating the new bitmap subpicture header\n");
 		return (false);
@@ -680,9 +680,9 @@ int convertOneOldSubpicture(unsigned char *aOldResourceBuffer,
 #ifdef BITMAP_CONVERSION_DEBUG
 			printf("            going to generate skip sequences before ending...\n");
 #endif
-			if (generateSkipSequencesAndEmptyLines(&loFuturePositionX,
-												   &loFuturePositionY, 0, loHeight, aNewBitmapBuffer,
-												   aNewBitmapBufferLength, aNewBitmapBufferPointer) == false)
+			if (generate_skip_sequences_and_empty_lines(&loFuturePositionX,
+														&loFuturePositionY, 0, loHeight, aNewBitmapBuffer,
+														aNewBitmapBufferLength, aNewBitmapBufferPointer) == false)
 			{
 				printf(
 					"Failure while generating lines to finish the picture!\n");
@@ -734,11 +734,11 @@ int convertOneOldSubpicture(unsigned char *aOldResourceBuffer,
 				if (loMode == 0) // Copy
 				{
 					// memcpy(loIndexedBitmap+loX+loY*loWidth, loBuffer+loPos, loAmount);
-					if (processOldSubpictureCopySequence(loX, loY,
-														 aOldResourceBuffer, aOldResourceBufferLength, loPos,
-														 loAmount, aNewBitmapBuffer, aNewBitmapBufferLength,
-														 aNewBitmapBufferPointer, &loFuturePositionX,
-														 &loFuturePositionY) == false)
+					if (process_old_subpicture_copy_sequence(loX, loY,
+															 aOldResourceBuffer, aOldResourceBufferLength, loPos,
+															 loAmount, aNewBitmapBuffer, aNewBitmapBufferLength,
+															 aNewBitmapBufferPointer, &loFuturePositionX,
+															 &loFuturePositionY) == false)
 					{
 						printf("Processing of an old copy sequence failed!\n");
 						return (false);
@@ -750,11 +750,11 @@ int convertOneOldSubpicture(unsigned char *aOldResourceBuffer,
 					int loValue = aOldResourceBuffer[loPos];
 					loPos++;
 					// memset(loIndexedBitmap+loX+loY*loWidth,loValue, loAmount);
-					if (processOldSubpictureFillSequence(loX, loY,
-														 aOldResourceBuffer, aOldResourceBufferLength,
-														 loValue, loAmount, aNewBitmapBuffer,
-														 aNewBitmapBufferLength, aNewBitmapBufferPointer,
-														 &loFuturePositionX, &loFuturePositionY) == false)
+					if (process_old_subpicture_fill_sequence(loX, loY,
+															 aOldResourceBuffer, aOldResourceBufferLength,
+															 loValue, loAmount, aNewBitmapBuffer,
+															 aNewBitmapBufferLength, aNewBitmapBufferPointer,
+															 &loFuturePositionX, &loFuturePositionY) == false)
 					{
 						printf("Processing of an old fill sequence failed!\n");
 						return (false);
@@ -788,10 +788,10 @@ int convertOneOldSubpicture(unsigned char *aOldResourceBuffer,
  Generate skip sequences and empty lines between aFuturePositionX, aFuturePositionY and aOldX, aOldY
  (not including aOldX, aOldY)
  */
-int generateSkipSequencesAndEmptyLines(int *aFuturePositionX,
-									   int *aFuturePositionY, int aOldX, int aOldY,
-									   unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-									   int *aNewBitmapBufferPointer)
+int generate_skip_sequences_and_empty_lines(int *aFuturePositionX,
+											int *aFuturePositionY, int aOldX, int aOldY,
+											unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
+											int *aNewBitmapBufferPointer)
 {
 	int i;
 	int loSkipLength;
@@ -811,8 +811,8 @@ int generateSkipSequencesAndEmptyLines(int *aFuturePositionX,
 	// add end tokens (end of lines) for all lines lower than aOldY
 	for (i = *aFuturePositionY; i < aOldY; i++)
 	{
-		if (addNewEndToken(aNewBitmapBuffer, aNewBitmapBufferLength,
-						   aNewBitmapBufferPointer, aFuturePositionX, aFuturePositionY) == false)
+		if (add_new_end_token(aNewBitmapBuffer, aNewBitmapBufferLength,
+							  aNewBitmapBufferPointer, aFuturePositionX, aFuturePositionY) == false)
 		{
 			printf(
 				"Unable to add a new end token in generateSjipSequencesAndEmptyLines!\n");
@@ -823,8 +823,8 @@ int generateSkipSequencesAndEmptyLines(int *aFuturePositionX,
 	if (loSkipLength > 0)
 	{
 		// add a skip token if needed
-		if (addNewSkipToken(aNewBitmapBuffer, aNewBitmapBufferLength,
-							aNewBitmapBufferPointer, loSkipLength, aFuturePositionX) == false)
+		if (add_new_skip_token(aNewBitmapBuffer, aNewBitmapBufferLength,
+							   aNewBitmapBufferPointer, loSkipLength, aFuturePositionX) == false)
 		{
 			printf(
 				"Unable to add a new skip token in generateSjipSequencesAndEmptyLines!\n");
@@ -837,27 +837,27 @@ int generateSkipSequencesAndEmptyLines(int *aFuturePositionX,
 /*
  Processes an "old" copy sequence
  */
-int processOldSubpictureCopySequence(int aOldX, int aOldY,
-									 unsigned char *aOldResourceBuffer, int aOldResourceBufferLength,
-									 int aPos, int aAmount, unsigned char *aNewBitmapBuffer,
-									 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
-									 int *aFuturePositionX, int *aFuturePositionY)
+int process_old_subpicture_copy_sequence(int aOldX, int aOldY,
+										 unsigned char *aOldResourceBuffer, int aOldResourceBufferLength,
+										 int aPos, int aAmount, unsigned char *aNewBitmapBuffer,
+										 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
+										 int *aFuturePositionX, int *aFuturePositionY)
 {
 #ifdef BITMAP_CONVERSION_DEBUG
 	printf("          Copy sequence, length %d\n", aAmount);
 	printf("            going to generate skip sequences before string...\n");
 #endif
-	if (generateSkipSequencesAndEmptyLines(aFuturePositionX, aFuturePositionY,
-										   aOldX, aOldY, aNewBitmapBuffer, aNewBitmapBufferLength,
-										   aNewBitmapBufferPointer) == false)
+	if (generate_skip_sequences_and_empty_lines(aFuturePositionX, aFuturePositionY,
+												aOldX, aOldY, aNewBitmapBuffer, aNewBitmapBufferLength,
+												aNewBitmapBufferPointer) == false)
 	{
 		printf(
 			"Failure while generating skip sequences and empty lines before processing an old copy sequence!\n");
 		return (false);
 	}
-	if (addNewStringToken(aOldResourceBuffer, aOldResourceBufferLength, aPos,
-						  aAmount, aNewBitmapBuffer, aNewBitmapBufferLength,
-						  aNewBitmapBufferPointer, aFuturePositionX) == false)
+	if (add_new_string_token(aOldResourceBuffer, aOldResourceBufferLength, aPos,
+							 aAmount, aNewBitmapBuffer, aNewBitmapBufferLength,
+							 aNewBitmapBufferPointer, aFuturePositionX) == false)
 	{
 		printf("Unable to add a new string token!\n");
 		return (false);
@@ -868,26 +868,26 @@ int processOldSubpictureCopySequence(int aOldX, int aOldY,
 /*
  Processes an old "fill" sequence
  */
-int processOldSubpictureFillSequence(int aOldX, int aOldY,
-									 unsigned char *aOldResourceBuffer, int aOldResourceBufferLength,
-									 char aValue, int aAmount, unsigned char *aNewBitmapBuffer,
-									 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
-									 int *aFuturePositionX, int *aFuturePositionY)
+int process_old_subpicture_fill_sequence(int aOldX, int aOldY,
+										 unsigned char *aOldResourceBuffer, int aOldResourceBufferLength,
+										 char aValue, int aAmount, unsigned char *aNewBitmapBuffer,
+										 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
+										 int *aFuturePositionX, int *aFuturePositionY)
 {
 #ifdef BITMAP_CONVERSION_DEBUG
 	printf("          Fill sequence, length %d, value %d\n", aAmount, (int)aValue);
 	printf("            going to generate skip sequences before run...\n");
 #endif
-	if (generateSkipSequencesAndEmptyLines(aFuturePositionX, aFuturePositionY,
-										   aOldX, aOldY, aNewBitmapBuffer, aNewBitmapBufferLength,
-										   aNewBitmapBufferPointer) == false)
+	if (generate_skip_sequences_and_empty_lines(aFuturePositionX, aFuturePositionY,
+												aOldX, aOldY, aNewBitmapBuffer, aNewBitmapBufferLength,
+												aNewBitmapBufferPointer) == false)
 	{
 		printf(
 			"Failure while generating skip sequences and empty lines before processing an old fill sequence!\n");
 		return (false);
 	}
-	if (addNewRunToken(aValue, aAmount, aNewBitmapBuffer,
-					   aNewBitmapBufferLength, aNewBitmapBufferPointer, aFuturePositionX) == false)
+	if (add_new_run_token(aValue, aAmount, aNewBitmapBuffer,
+						  aNewBitmapBufferLength, aNewBitmapBufferPointer, aFuturePositionX) == false)
 	{
 		printf("Unable to add a new run token!\n");
 		return (false);
@@ -898,9 +898,9 @@ int processOldSubpictureFillSequence(int aOldX, int aOldY,
 /*
  Adds a new end (end of line) token
  */
-int addNewEndToken(unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-				   int *aNewBitmapBufferPointer, int *aFuturePositionX,
-				   int *aFuturePositionY)
+int add_new_end_token(unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
+					  int *aNewBitmapBufferPointer, int *aFuturePositionX,
+					  int *aFuturePositionY)
 {
 #ifdef BITMAP_CONVERSION_DEBUG
 	printf("              addNewEndToken\n");
@@ -921,8 +921,8 @@ int addNewEndToken(unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
 /*
  Add a new skip token
  */
-int addNewSkipToken(unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-					int *aNewBitmapBufferPointer, int aLength, int *aFuturePositionX)
+int add_new_skip_token(unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
+					   int *aNewBitmapBufferPointer, int aLength, int *aFuturePositionX)
 {
 #ifdef BITMAP_CONVERSION_DEBUG
 	printf("              addNewSkipToken length: %d\n", aLength);
@@ -942,8 +942,8 @@ int addNewSkipToken(unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
 #endif
 		while (aLength > MAX_NEW_SKIP_LENGTH)
 		{
-			if (addNewSkipToken(aNewBitmapBuffer, aNewBitmapBufferLength,
-								aNewBitmapBufferPointer, loOneHalf, aFuturePositionX) == false)
+			if (add_new_skip_token(aNewBitmapBuffer, aNewBitmapBufferLength,
+								   aNewBitmapBufferPointer, loOneHalf, aFuturePositionX) == false)
 			{
 				printf("Creation of of half length skip token failed!\n");
 				return (false);
@@ -971,10 +971,10 @@ int addNewSkipToken(unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
 /*
  Add new string token
  */
-int addNewStringToken(unsigned char *aOldResourceBuffer,
-					  int aOldResourceBufferLength, int aPos, int aAmount,
-					  unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-					  int *aNewBitmapBufferPointer, int *aFuturePositionX)
+int add_new_string_token(unsigned char *aOldResourceBuffer,
+						 int aOldResourceBufferLength, int aPos, int aAmount,
+						 unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
+						 int *aNewBitmapBufferPointer, int *aFuturePositionX)
 {
 	int loStringMarker;
 	int i;
@@ -1004,9 +1004,9 @@ int addNewStringToken(unsigned char *aOldResourceBuffer,
 #endif
 		while (aAmount > MAX_NEW_STRING_LENGTH)
 		{
-			if (addNewStringToken(aOldResourceBuffer, aOldResourceBufferLength,
-								  aPos, loOneHalf, aNewBitmapBuffer, aNewBitmapBufferLength,
-								  aNewBitmapBufferPointer, aFuturePositionX) == false)
+			if (add_new_string_token(aOldResourceBuffer, aOldResourceBufferLength,
+									 aPos, loOneHalf, aNewBitmapBuffer, aNewBitmapBufferLength,
+									 aNewBitmapBufferPointer, aFuturePositionX) == false)
 			{
 				printf("Creation of of half length string token failed!\n");
 				return (false);
@@ -1043,9 +1043,9 @@ int addNewStringToken(unsigned char *aOldResourceBuffer,
 /*
  Add new run token
  */
-int addNewRunToken(unsigned char aValue, int aAmount,
-				   unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-				   int *aNewBitmapBufferPointer, int *aFuturePositionX)
+int add_new_run_token(unsigned char aValue, int aAmount,
+					  unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
+					  int *aNewBitmapBufferPointer, int *aFuturePositionX)
 {
 	int loRunMarker;
 #ifdef BITMAP_CONVERSION_DEBUG
@@ -1067,9 +1067,9 @@ int addNewRunToken(unsigned char aValue, int aAmount,
 #endif
 		while (aAmount > MAX_NEW_RUN_LENGTH)
 		{
-			if (addNewRunToken(aValue, loOneHalf, aNewBitmapBuffer,
-							   aNewBitmapBufferLength, aNewBitmapBufferPointer,
-							   aFuturePositionX) == false)
+			if (add_new_run_token(aValue, loOneHalf, aNewBitmapBuffer,
+								  aNewBitmapBufferLength, aNewBitmapBufferPointer,
+								  aFuturePositionX) == false)
 			{
 				printf("Creation of of half length run token failed!\n");
 				return (false);
@@ -1101,9 +1101,9 @@ int addNewRunToken(unsigned char aValue, int aAmount,
  Converts the font resource aResourceNumber from old (EOB 3) format to the new (AESOP/32) format
  (changes the resource file)
  */
-int convertOneOldFont(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
-					  struct RESGlobalHeader *aNewFileHeader, int aResourceNumber,
-					  char *aResourceName)
+int convert_one_old_font(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
+						 struct RESGlobalHeader *aNewFileHeader, int aResourceNumber,
+						 char *aResourceName)
 {
 	unsigned char *loOldResourceBuffer;
 	int loOldResourceLength;
@@ -1121,8 +1121,8 @@ int convertOneOldFont(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
 	}
 
 	// get the converted font
-	loNewResourceBuffer = getNewFontForOldFont(loOldResourceBuffer,
-											   loOldResourceLength, &loNewResourceLength);
+	loNewResourceBuffer = get_new_font_for_old_font(loOldResourceBuffer,
+													loOldResourceLength, &loNewResourceLength);
 	if (loNewResourceBuffer == NULL)
 	{
 		printf("Failed to get the converted Font for the resource number %d!\n",
@@ -1136,9 +1136,9 @@ int convertOneOldFont(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
 	}
 
 	// replace the old font by a new one
-	if (replaceResourceInOpenedFile(aResourceName, aResourceNumber,
-									loNewResourceBuffer, loNewResourceLength, aNewFile, aNewFileHeader,
-									aNewFileDirectoryPointers, false) == false)
+	if (replace_resource_in_opened_file(aResourceName, aResourceNumber,
+										loNewResourceBuffer, loNewResourceLength, aNewFile, aNewFileHeader,
+										aNewFileDirectoryPointers, false) == false)
 	{
 		printf(
 			"Failed to replace the old font by a new one (resource number %d)!\n",
@@ -1156,8 +1156,8 @@ int convertOneOldFont(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
 /*
  Allocate a big buffer for the new font
  */
-unsigned char *allocateNewFontBuffer(unsigned int aOldFontHeaderSize,
-									 unsigned int *aNewFontBufferLength)
+unsigned char *allocate_new_font_buffer(unsigned int aOldFontHeaderSize,
+										unsigned int *aNewFontBufferLength)
 {
 	int loAllocatedSize;
 	unsigned char *loResult;
@@ -1180,7 +1180,7 @@ unsigned char *allocateNewFontBuffer(unsigned int aOldFontHeaderSize,
 /*
  Free old character definition table
  */
-void freeOldCharacterDefinitionTable(
+void free_old_character_definition_table(
 	unsigned char **aOldCharacterDefinitionTable)
 {
 	int i;
@@ -1202,8 +1202,8 @@ void freeOldCharacterDefinitionTable(
 /*
  Convert the old font to a new one
  */
-unsigned char *getNewFontForOldFont(unsigned char *aOldResourceBuffer,
-									unsigned int aOldResourceLength, int *aNewResourceLength)
+unsigned char *get_new_font_for_old_font(unsigned char *aOldResourceBuffer,
+										 unsigned int aOldResourceLength, int *aNewResourceLength)
 {
 	unsigned char *loNewFontBuffer = NULL;
 	unsigned int loNewFontBufferLength = 0;
@@ -1263,33 +1263,33 @@ unsigned char *getNewFontForOldFont(unsigned char *aOldResourceBuffer,
 	// read the old characters
 	for (i = 0; i < loNumberOfCharacters; i++)
 	{
-		if (readOldCharacterDefinition(&(loOldCharacterDefinitions[i]), loPos,
-									   i, aOldResourceBuffer, aOldResourceLength, loFontHeight) == false)
+		if (read_old_character_definition(&(loOldCharacterDefinitions[i]), loPos,
+										  i, aOldResourceBuffer, aOldResourceLength, loFontHeight) == false)
 		{
 			// error while reading an old character definition
 			printf(
 				"Error while reading an old character definition number: %d\n",
 				i);
-			freeOldCharacterDefinitionTable(loOldCharacterDefinitions);
+			free_old_character_definition_table(loOldCharacterDefinitions);
 			return (NULL);
 		}
 	}
 
 	// allocate the space for a new font
-	loNewFontBuffer = allocateNewFontBuffer(aOldResourceLength,
-											&loNewFontBufferLength);
+	loNewFontBuffer = allocate_new_font_buffer(aOldResourceLength,
+											   &loNewFontBufferLength);
 	if (loNewFontBuffer == NULL)
 	{
 		printf("Error: failure to allocate a new font buffer!\n");
-		freeOldCharacterDefinitionTable(loOldCharacterDefinitions);
+		free_old_character_definition_table(loOldCharacterDefinitions);
 		return (NULL);
 	}
 
-	if (prepareNewFontHeader(loNumberOfCharacters, loFontHeight,
-							 loNewFontBuffer, loNewFontBufferLength, &loNewFontBufferPointer) == false)
+	if (prepare_new_font_header(loNumberOfCharacters, loFontHeight,
+								loNewFontBuffer, loNewFontBufferLength, &loNewFontBufferPointer) == false)
 	{
 		printf("Unable to create the header for the new font!\n");
-		freeOldCharacterDefinitionTable(loOldCharacterDefinitions);
+		free_old_character_definition_table(loOldCharacterDefinitions);
 		free(loNewFontBuffer);
 		return (NULL);
 	}
@@ -1301,13 +1301,13 @@ unsigned char *getNewFontForOldFont(unsigned char *aOldResourceBuffer,
 
 	for (i = 0; i < loNumberOfCharacters; i++)
 	{
-		if (convertOldAndStoreNewCharacter(loOldCharacterDefinitions[i], i,
-										   loFontHeight, loNewFontBuffer, loNewFontBufferLength,
-										   &loNewFontBufferPointer, loNewOffsetsStart) == false)
+		if (convert_old_and_store_new_character(loOldCharacterDefinitions[i], i,
+												loFontHeight, loNewFontBuffer, loNewFontBufferLength,
+												&loNewFontBufferPointer, loNewOffsetsStart) == false)
 		{
 			printf("Failure while converting the old character number: %d!\n",
 				   i);
-			freeOldCharacterDefinitionTable(loOldCharacterDefinitions);
+			free_old_character_definition_table(loOldCharacterDefinitions);
 			free(loNewFontBuffer);
 			return (NULL);
 		}
@@ -1317,16 +1317,16 @@ unsigned char *getNewFontForOldFont(unsigned char *aOldResourceBuffer,
 	*aNewResourceLength = loNewFontBufferPointer;
 	printf("The newly converted font has size %d bytes.\n",
 		   (int)*aNewResourceLength);
-	freeOldCharacterDefinitionTable(loOldCharacterDefinitions);
+	free_old_character_definition_table(loOldCharacterDefinitions);
 	return (loNewFontBuffer);
 }
 
 /*
  Read one old character definition
  */
-int readOldCharacterDefinition(unsigned char **aResult, int aStartPos,
-							   int aChar, unsigned char *aOldResourceBuffer,
-							   unsigned int aOldResourceLength, int aHeight)
+int read_old_character_definition(unsigned char **aResult, int aStartPos,
+								  int aChar, unsigned char *aOldResourceBuffer,
+								  unsigned int aOldResourceLength, int aHeight)
 {
 	unsigned int loPointerAddress;
 	unsigned int loPointer;
@@ -1388,9 +1388,9 @@ int readOldCharacterDefinition(unsigned char **aResult, int aStartPos,
 /*
  Create header for the new font
  */
-int prepareNewFontHeader(int aNumberOfCharacters, int aFontHeight,
-						 unsigned char *aNewFontBuffer, unsigned int aNewFontBufferLength,
-						 int *aNewFontBufferPointer)
+int prepare_new_font_header(int aNumberOfCharacters, int aFontHeight,
+							unsigned char *aNewFontBuffer, unsigned int aNewFontBufferLength,
+							int *aNewFontBufferPointer)
 {
 	struct NEW_FONT_HEADER loNewFontHeader;
 	if (sizeof(struct NEW_FONT_HEADER) > aNewFontBufferLength)
@@ -1413,10 +1413,10 @@ int prepareNewFontHeader(int aNumberOfCharacters, int aFontHeight,
 /*
  Convert old character ans store it as a new character
  */
-int convertOldAndStoreNewCharacter(unsigned char *aOldCharacterDefinition,
-								   int aChar, int aFontHeight, unsigned char *aNewFontBuffer,
-								   unsigned int aNewFontBufferLength, int *aNewFontBufferPointer,
-								   int aNewOffsetsStart)
+int convert_old_and_store_new_character(unsigned char *aOldCharacterDefinition,
+										int aChar, int aFontHeight, unsigned char *aNewFontBuffer,
+										unsigned int aNewFontBufferLength, int *aNewFontBufferPointer,
+										int aNewOffsetsStart)
 {
 	int loOldColumns;
 	unsigned int loOldCharacterDefinitionSizeInBytes;
@@ -1484,9 +1484,9 @@ int convertOldAndStoreNewCharacter(unsigned char *aOldCharacterDefinition,
  Patches the menu in EYE.RES from the EOB 3 so that it is usable in the AESOP/32
  (changes the resource file)
  */
-int patchEOB3MenuInOpenedFile(FILE *aNewFile,
-							  DIRPOINTER *aNewFileDirectoryPointers,
-							  struct RESGlobalHeader *aNewFileHeader)
+int patch_eob3_menu_in_opened_file(FILE *aNewFile,
+								   DIRPOINTER *aNewFileDirectoryPointers,
+								   struct RESGlobalHeader *aNewFileHeader)
 {
 	int loResourceNumber = 1374;
 	char loResourceName[] = "menu";
@@ -1526,34 +1526,34 @@ int patchEOB3MenuInOpenedFile(FILE *aNewFile,
 	 00000349: 0F 1A
 	 */
 
-	if (patchOneByte(loResourceBuffer, loFoundResourceLength, 0x345, 0x00, 0xff) == false)
+	if (patch_one_byte(loResourceBuffer, loFoundResourceLength, 0x345, 0x00, 0xff) == false)
 	{
 		free(loResourceBuffer);
 		return (false);
 	}
 
-	if (patchOneByte(loResourceBuffer, loFoundResourceLength, 0x346, 0x00, 0xff) == false)
+	if (patch_one_byte(loResourceBuffer, loFoundResourceLength, 0x346, 0x00, 0xff) == false)
 	{
 		free(loResourceBuffer);
 		return (false);
 	}
 
-	if (patchOneByte(loResourceBuffer, loFoundResourceLength, 0x348, 0xff, 0x00) == false)
+	if (patch_one_byte(loResourceBuffer, loFoundResourceLength, 0x348, 0xff, 0x00) == false)
 	{
 		free(loResourceBuffer);
 		return (false);
 	}
 
-	if (patchOneByte(loResourceBuffer, loFoundResourceLength, 0x349, 0x0f, 0x1a) == false)
+	if (patch_one_byte(loResourceBuffer, loFoundResourceLength, 0x349, 0x0f, 0x1a) == false)
 	{
 		free(loResourceBuffer);
 		return (false);
 	}
 
 	// replace the old resource by a new one
-	if (replaceResourceInOpenedFile(loResourceName, loResourceNumber,
-									loResourceBuffer, loFoundResourceLength, aNewFile, aNewFileHeader,
-									aNewFileDirectoryPointers, false) == false)
+	if (replace_resource_in_opened_file(loResourceName, loResourceNumber,
+										loResourceBuffer, loFoundResourceLength, aNewFile, aNewFileHeader,
+										aNewFileDirectoryPointers, false) == false)
 	{
 		printf(
 			"Failed to replace the old resource %s by a new one (resource number %d)!\n",
@@ -1571,8 +1571,8 @@ int patchEOB3MenuInOpenedFile(FILE *aNewFile,
 /*
  Patch one byte in the provided binary
  */
-int patchOneByte(unsigned char *aBinary, int aBinaryLength, int aAddress,
-				 unsigned char aOldValue, unsigned char aNewValue)
+int patch_one_byte(unsigned char *aBinary, int aBinaryLength, int aAddress,
+				   unsigned char aOldValue, unsigned char aNewValue)
 {
 	if (aBinary == NULL)
 	{

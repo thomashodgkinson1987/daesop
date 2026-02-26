@@ -62,87 +62,197 @@ struct NEW_FONT_HEADER
 };
 
 // bitmap testing
-int testOneOldBitmap(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-					 char *aBitmapName, int aBitmapNumber, FILE *aOutputFile);
+int test_one_old_bitmap(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *bitmap_name,
+	int bitmap_number,
+	FILE *output_file);
+
 // replacement of resources
-int replaceResourceByResourceFromMemory(FILE *aResFile, char *aResourceName,
-										int aResourceNumber, unsigned char *aAddedResourceBuffer,
-										unsigned int aAddedResourceSize, char *aNewFileName,
-										int aNewResourceHasHeader);
-int replaceResourceInOpenedFile(char *aResourceName, int aResourceNumber,
-								unsigned char *aAddedResourceBuffer, unsigned int aAddedResourceSize,
-								FILE *aNewFile, struct RESGlobalHeader *aNewFileHeader,
-								DIRPOINTER *aNewFileDirectoryPointers, int aNewResourceHasHeader);
+int replace_resource_by_resource_from_memory(
+	FILE *res_file,
+	char *resource_name,
+	int resource_number,
+	unsigned char *added_resource_buffer,
+	unsigned int added_resource_size,
+	char *new_filename,
+	int new_resource_has_header);
+
+int replace_resource_in_opened_file(
+	char *resource_name,
+	int resource_number,
+	unsigned char *added_resource_buffer,
+	unsigned int added_resource_size,
+	FILE *new_file,
+	struct RESGlobalHeader *new_file_header,
+	DIRPOINTER *new_file_directory_pointers,
+	int new_resource_has_header);
+
 // conversion of bitmaps
-int convertOneOldBitmap(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
-						struct RESGlobalHeader *aNewFileHeader, int aResourceNumber,
-						char *aResourceName);
-unsigned char *getNewBitmapForOldBitmap(unsigned char *aOldResourceBuffer,
-										unsigned int aOldResourceLength, int *aNewResourceLength);
-unsigned char *allocateNewBitmapBuffer(int aOldBitmapHeaderSize,
-									   int *aNewBitmapBufferLength);
-int prepareNewBitmapGlobalHeader(unsigned char *aNewBitmapBuffer,
-								 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
-								 int aSubpictures);
-void storeNewBitmapSubpicturePointer(unsigned char *aNewBitmapBuffer,
-									 int aIndex, unsigned int aPointer);
-int prepareNewBitmapSubpictureHeader(unsigned char *aNewBitmapBuffer,
-									 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer, int aWidth,
-									 int aHeight);
-int convertOneOldSubpicture(unsigned char *aOldResourceBuffer,
-							int aOldResourceBufferLength, unsigned int aOldPictureStart,
-							unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-							int *aNewBitmapBufferPointer);
-int generateSkipSequencesAndEmptyLines(int *aFuturePositionX,
-									   int *aFuturePositionY, int aOldX, int aOldY,
-									   unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-									   int *aNewBitmapBufferPointer);
-int processOldSubpictureCopySequence(int aOldX, int aOldY,
-									 unsigned char *aOldResourceBuffer, int aOldResourceBufferLength,
-									 int aPos, int aAmount, unsigned char *aNewBitmapBuffer,
-									 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
-									 int *aFuturePositionX, int *aFuturePositionY);
-int processOldSubpictureFillSequence(int aOldX, int aOldY,
-									 unsigned char *aOldResourceBuffer, int aOldResourceBufferLength,
-									 char aValue, int aAmount, unsigned char *aNewBitmapBuffer,
-									 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
-									 int *aFuturePositionX, int *aFuturePositionY);
-int addNewEndToken(unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-				   int *aNewBitmapBufferPointer, int *aFuturePositionX,
-				   int *aFuturePositionY);
-int addNewSkipToken(unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-					int *aNewBitmapBufferPointer, int aLength, int *aFuturePositionX);
-int addNewStringToken(unsigned char *aOldResourceBuffer,
-					  int aOldResourceBufferLength, int aPos, int aAmount,
-					  unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-					  int *aNewBitmapBufferPointer, int *aFuturePositionX);
-int addNewRunToken(unsigned char aValue, int aAmount,
-				   unsigned char *aNewBitmapBuffer, int aNewBitmapBufferLength,
-				   int *aNewBitmapBufferPointer, int *aFuturePositionX);
+int convert_one_old_bitmap(
+	FILE *new_file,
+	DIRPOINTER *new_file_directory_pointers,
+	struct RESGlobalHeader *new_file_header,
+	int resource_number,
+	char *resource_name);
+
+unsigned char *get_new_bitmap_for_old_bitmap(
+	unsigned char *old_resource_buffer,
+	unsigned int old_resource_length,
+	int *new_resource_length);
+
+unsigned char *allocate_new_bitmap_buffer(
+	int old_bitmap_header_size,
+	int *new_bitmap_buffer_length);
+
+int prepare_new_bitmap_global_header(
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer,
+	int subpictures);
+
+void store_new_bitmap_subpicture_pointer(
+	unsigned char *new_bitmap_buffer,
+	int index,
+	unsigned int pointer);
+
+int prepare_new_bitmap_subpicture_header(
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer,
+	int width,
+	int height);
+
+int convert_one_old_subpicture(
+	unsigned char *old_resource_buffer,
+	int old_resource_buffer_length,
+	unsigned int old_picture_start,
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer);
+
+int generate_skip_sequences_and_empty_lines(
+	int *future_position_x,
+	int *future_position_y,
+	int old_x,
+	int old_y,
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer);
+
+int process_old_subpicture_copy_sequence(
+	int old_x,
+	int old_y,
+	unsigned char *old_resource_buffer,
+	int old_resource_buffer_length,
+	int pos,
+	int amount,
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer,
+	int *future_position_x,
+	int *future_position_y);
+
+int process_old_subpicture_fill_sequence(
+	int old_x,
+	int old_y,
+	unsigned char *old_resource_buffer,
+	int old_resource_buffer_length,
+	char value,
+	int amount,
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer,
+	int *future_position_x,
+	int *future_position_y);
+
+int add_new_end_token(
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer,
+	int *future_position_x,
+	int *future_position_y);
+
+int add_new_skip_token(
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer,
+	int length,
+	int *future_position_x);
+
+int add_new_string_token(
+	unsigned char *old_resource_buffer,
+	int old_resource_buffer_length,
+	int pos,
+	int amount,
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer,
+	int *future_position_x);
+
+int add_new_run_token(
+	unsigned char value,
+	int amount,
+	unsigned char *new_bitmap_buffer,
+	int new_bitmap_buffer_length,
+	int *new_bitmap_buffer_pointer,
+	int *future_position_x);
+
 // conversion of fonts
-int convertOneOldFont(FILE *aNewFile, DIRPOINTER *aNewFileDirectoryPointers,
-					  struct RESGlobalHeader *aNewFileHeader, int aResourceNumber,
-					  char *aResourceName);
-unsigned char *allocateNewFontBuffer(unsigned int aOldFontHeaderSize,
-									 unsigned int *aNewFontBufferLength);
-void freeOldCharacterDefinitionTable(
-	unsigned char **aOldCharacterDefinitionTable);
-unsigned char *getNewFontForOldFont(unsigned char *aOldResourceBuffer,
-									unsigned int aOldResourceLength, int *aNewResourceLength);
-int readOldCharacterDefinition(unsigned char **aResult, int aStartPos,
-							   int aChar, unsigned char *aOldResourceBuffer,
-							   unsigned int aOldResourceLength, int aHeight);
-int prepareNewFontHeader(int aNumberOfCharacters, int aFontHeight,
-						 unsigned char *aNewFontBuffer, unsigned int aNewFontBufferLength,
-						 int *aNewFontBufferPointer);
-int convertOldAndStoreNewCharacter(unsigned char *aOldCharacterDefinition,
-								   int aChar, int aFontHeight, unsigned char *aNewFontBuffer,
-								   unsigned int aNewFontBufferLength, int *aNewFontBufferPointer,
-								   int aNewOffsetsStart);
-int patchEOB3MenuInOpenedFile(FILE *aNewFile,
-							  DIRPOINTER *aNewFileDirectoryPointers,
-							  struct RESGlobalHeader *aNewFileHeader);
-int patchOneByte(unsigned char *aBinary, int aBinaryLength, int aAddress,
-				 unsigned char aOldValue, unsigned char aNewValue);
+int convert_one_old_font(
+	FILE *new_file,
+	DIRPOINTER *new_file_directory_pointers,
+	struct RESGlobalHeader *new_file_header,
+	int resource_number,
+	char *resource_name);
+
+unsigned char *allocate_new_font_buffer(
+	unsigned int old_font_header_size,
+	unsigned int *new_font_buffer_length);
+
+void free_old_character_definition_table(
+	unsigned char **old_character_definition_table);
+
+unsigned char *get_new_font_for_old_font(
+	unsigned char *old_resource_buffer,
+	unsigned int old_resource_length,
+	int *new_resource_length);
+
+int read_old_character_definition(
+	unsigned char **result,
+	int start_pos,
+	int character,
+	unsigned char *old_resource_buffer,
+	unsigned int old_resource_length,
+	int height);
+
+int prepare_new_font_header(
+	int number_of_characters,
+	int font_height,
+	unsigned char *new_font_buffer,
+	unsigned int new_font_buffer_length,
+	int *new_font_buffer_pointer);
+
+int convert_old_and_store_new_character(
+	unsigned char *old_character_definition,
+	int character,
+	int font_height,
+	unsigned char *new_font_buffer,
+	unsigned int new_font_buffer_length,
+	int *new_font_buffer_pointer,
+	int new_offsets_start);
+
+int patch_eob3_menu_in_opened_file(
+	FILE *new_file,
+	DIRPOINTER *new_file_directory_pointers,
+	struct RESGlobalHeader *new_file_header);
+
+int patch_one_byte(
+	unsigned char *binary,
+	int binary_length,
+	int address,
+	unsigned char old_value,
+	unsigned char new_value);
 
 #endif

@@ -5,9 +5,9 @@
 
 #include "resstr.h"
 
-int readDirectoryBlocks(FILE *aResFile, DIRPOINTER *loDirectoryPointers);
+int read_directory_blocks(FILE *aResFile, DIRPOINTER *loDirectoryPointers);
 int getNumberOfDirectoryBlocks(DIRPOINTER *aDirectoryPointers);
-FILE *openAESOPResourceAndSetToFirstDirectoryBlock(char *aResName,
+FILE *open_aesop_resource_and_set_to_first_directory_block(char *aResName,
 												   const char *aMode, struct RESGlobalHeader *aHeaderPointer);
 
 #endif

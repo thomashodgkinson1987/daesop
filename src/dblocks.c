@@ -8,7 +8,7 @@
 /*
  Read directory blocks
  */
-int readDirectoryBlocks(FILE *aResFile, DIRPOINTER *loDirectoryPointers)
+int read_directory_blocks(FILE *aResFile, DIRPOINTER *loDirectoryPointers)
 {
 	int loDirBlockSize;
 	int loReadSize;
@@ -70,7 +70,7 @@ int getNumberOfDirectoryBlocks(DIRPOINTER *aDirectoryPointers)
 /*
  Opens RES file, sets file pointer on the first directory block
  */
-FILE *openAESOPResourceAndSetToFirstDirectoryBlock(char *aResName,
+FILE *open_aesop_resource_and_set_to_first_directory_block(char *aResName,
 												   const char *aMode, struct RESGlobalHeader *aHeaderPointer)
 {
 	FILE *loResFile;

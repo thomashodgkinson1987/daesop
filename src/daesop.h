@@ -34,50 +34,118 @@
 #define TBL_END_MARKER_LENGTH 36
 
 // syntax
-void syntaxInformation(void);
+void syntax_information(void);
 
 // Commands
-int getInformation(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-				   char *aOutputFilename);
-int getResource(FILE *aResFile, DIRPOINTER *aDirectoryPointers, int aFunction,
-				char *aResource, char *aOutputFilename);
-void displayCodeResourceInformation(FILE *aResFile,
-									DIRPOINTER *aDirectoryPointers, FILE *aOutputFile, int aResourceType,
-									char *aResourceName, DICTENTRYPOINTER *aResourceNameArray);
-void displaySpecialAESOPResource(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-								 FILE *aOutputFile, int aResourceNumber);
-void displayHexadecimalDump(int aResourceNumber, FILE *aResFile,
-							DIRPOINTER *aDirectoryPointers, FILE *aOutputFile);
-void displayHexadecimalDumpOfMemoryBuffer(unsigned char *aBuffer, int aLength,
-										  FILE *aOutputFile);
-int getResourceInformation(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-						   int aFunction, char *aResource, char *aOutputFilename);
-void displayCodeResource(int aCodeResourceNumber, char *aCodeResourceName,
-						 IMPORTENTRYPOINTER *aFullImportResourceDictionary,
-						 int aImportResourceSize,
-						 EXPORTENTRYPOINTER *aFullExportResourceDictionary,
-						 int aExportResourceSize, FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-						 FILE *aOutputFile);
-int getResourcesInformation(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-							char *aOutputFilename);
-int testOldBitmaps(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-				   char *aOutputFilename);
-int replaceResourceByResourceFromFile(FILE *aResFile,
-									  DIRPOINTER *aDirectoryPointers, char *aResourceNumberString,
-									  char *aAddedResourceFileName, char *aNewFileName,
-									  int aNewResourceHasHeader);
-int getOffsetInformation(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-						 char *aOffsetString, char *aOutputFileName);
-int createTblFile(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-				  char *aTblFileName);
-int convertOldBitmaps(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-					  char *aNewFileName, int aIgnoreErrors);
-int convertOldFonts(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-					char *aNewFileName, int aIgnoreErrors);
-int patchEOB3Menu(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-				  char *aNewFileName);
-int convertEOB3toAESOP32(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-						 char *aNewFileName);
-int extractAllResources(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
-					   char *aOutputDirectory);
+int get_information(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *output_filename);
+
+int get_resource(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	int function,
+	char *resource,
+	char *output_filename);
+
+void display_code_resource_information(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	FILE *output_file,
+	int resource_type,
+	char *resource_name,
+	DICTENTRYPOINTER *resource_name_array);
+
+void display_special_aesop_resource(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	FILE *output_file,
+	int resource_number);
+
+void display_hexadecimal_dump(
+	int resource_number,
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	FILE *output_file);
+
+void display_hexadecimal_dump_of_memory_buffer(
+	unsigned char *buffer,
+	int length,
+	FILE *output_file);
+
+int get_resource_information(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	int function,
+	char *resource,
+	char *output_filename);
+
+void display_code_resource(
+	int code_resource_number,
+	char *code_resource_name,
+	IMPORTENTRYPOINTER *full_import_resource_dictionary,
+	int import_resource_size,
+	EXPORTENTRYPOINTER *full_export_resource_dictionary,
+	int export_resource_size,
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	FILE *output_file);
+
+int get_resources_information(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *output_filename);
+
+int test_old_bitmaps(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *output_filename);
+
+int replace_resource_by_resource_from_file(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *resource_number_string,
+	char *added_resource_fileName,
+	char *new_fileName,
+	int new_resource_has_header);
+
+int get_offset_information(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *offset_string,
+	char *output_filename);
+
+int create_tbl_file(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *tbl_filename);
+
+int convert_old_bitmaps(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *new_fileName,
+	int ignore_errors);
+
+int convert_old_fonts(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *new_fileName,
+	int ignore_errors);
+
+int patch_eob3_menu(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *new_fileName);
+
+int convert_eob3_to_aesop32(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *new_fileName);
+
+int extract_all_resources(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *output_directory);
+
 #endif

@@ -24,7 +24,7 @@ char *makeString(const char *aString)
 /*
  Get the date
  */
-char *unpackDate(unsigned int aDate, char *aDateString)
+char *unpack_date(unsigned int aDate, char *aDateString)
 {
 	const char *months[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
 							  "Aug", "Sep", "Oct", "Nov", "Dec"};

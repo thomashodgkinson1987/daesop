@@ -144,7 +144,7 @@ int getResourceNumberFromNameString(char *aResource,
 // common
 DICTENTRYPOINTER *readTheDictionary(int aResource, int aMaxDictionaryEntries,
 									FILE *aResFile, DIRPOINTER *aDirectoryPointers, int *aResourceSize);
-int getNumberOfItems(DICTENTRYPOINTER *aArray);
+int get_number_of_items(DICTENTRYPOINTER *aArray);
 int sortDictionaryAccordingToSecondNumber(DICTENTRYPOINTER *aArray);
 int sortDictionaryAccordingToSecondString(DICTENTRYPOINTER *aArray);
 int sortDictionaryAccordingToFirstString(DICTENTRYPOINTER *aArray);
@@ -153,7 +153,7 @@ void displayDictionary(char *aText, char *aHeader, char *aFormat,
 					   int aSecondIsDecimalNumber);
 // Special tables
 char *getResourceName(char *aResult, int aResourceNumber);
-DICTENTRYPOINTER *getResourceNameArray(FILE *aResFile,
+DICTENTRYPOINTER *get_resource_name_array(FILE *aResFile,
 									   DIRPOINTER *aDirectoryPointers);
 DICTENTRYPOINTER *getRawImportArray(int aImportResourceNumber, FILE *aResFile,
 									DIRPOINTER *aDirectoryPointers, int *aImportResourceSize);

@@ -8,7 +8,7 @@
 /*
  Get the file index of the specified resource (including the resource header)
  */
-long getResourceEntryIndex(int aNumber, DIRPOINTER *aDirectoryPointers)
+long get_resource_entry_index(int aNumber, DIRPOINTER *aDirectoryPointers)
 {
 	int loDirBlockNumber = aNumber / DIRECTORY_BLOCK_ITEMS;
 	int loNumberInDirBlock = aNumber % DIRECTORY_BLOCK_ITEMS;
@@ -38,7 +38,7 @@ long getResourceEntryIndex(int aNumber, DIRPOINTER *aDirectoryPointers)
 /*
  Reads the resource entry header
  */
-struct RESEntryHeader *getResourceEntryHeader(int aNumber, FILE *aResFile,
+struct RESEntryHeader *get_resource_entry_header(int aNumber, FILE *aResFile,
 											  DIRPOINTER *aDirectoryPointers)
 {
 	long loResourceEntryIndex;
@@ -46,7 +46,7 @@ struct RESEntryHeader *getResourceEntryHeader(int aNumber, FILE *aResFile,
 	unsigned int loReadSize;
 	struct RESEntryHeader *loEntryHeader = NULL;
 
-	loResourceEntryIndex = getResourceEntryIndex(aNumber, aDirectoryPointers);
+	loResourceEntryIndex = get_resource_entry_index(aNumber, aDirectoryPointers);
 	if (loResourceEntryIndex == -1)
 	{
 		// error
@@ -94,10 +94,10 @@ unsigned char *readResourceBinary(int aResourceNumber, FILE *aResFile,
 	unsigned int loReadSize;
 
 	// start of the resource
-	loResourceEntryIndex = getResourceEntryIndex(aResourceNumber,
+	loResourceEntryIndex = get_resource_entry_index(aResourceNumber,
 												 aDirectoryPointers);
 	// length
-	loResEntryHeader = getResourceEntryHeader(aResourceNumber, aResFile,
+	loResEntryHeader = get_resource_entry_header(aResourceNumber, aResFile,
 											  aDirectoryPointers);
 	if (loResourceEntryIndex == -1 || loResEntryHeader == NULL)
 	{

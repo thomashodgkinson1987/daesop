@@ -6,7 +6,7 @@
 #define MAX_COPY_BUFFER 10000
 
 char *makeString(const char *aString);
-char *unpackDate(unsigned int aDate, char *aDateString);
+char *unpack_date(unsigned int aDate, char *aDateString);
 int strcmpCS(const char *s1, const char *s2);
 void toUpperCase(char *aS);
 char getCharacterForDump(char aChar);
