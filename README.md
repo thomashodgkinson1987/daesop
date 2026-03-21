@@ -13,11 +13,17 @@ This project modernises the `daesop` utility, which has a long history in the re
 - **John Miles**: The original creator of the AESOP engine (AESOP/16 and AESOP/32) and the AIL/VFX libraries. He graciously released the engine's compiler and documentation into the public domain in 2009.
 - **John Ratcliff**: Co-developer and creator of the `MOD32SND` sound mixer used by the engine.
 - **mirekluza**: The original author of the `daesop` utility and the driving force behind the [AESOP/32 modernisation project on VOGONS](https://www.vogons.org/viewtopic.php?t=20601).
-- **Bret Curtis ([psi29a](https://github.com/psi29a))**: For his work on updating and maintaining `daesop` in the [thirdeye](https://github.com/psi29a/thirdeye/) repository.
+- **Bret Curtis ([psi29a](https://github.com/psi29a))**: For his work on the [thirdeye](https://github.com/psi29a/thirdeye/) project, which served as a valuable reference for modernising AESOP tools.
 
-The current version of this tool focuses on ensuring cross-platform compatibility and maintaining the codebase for modern 64-bit systems, building upon the foundational work of these contributors.
+The current version of this tool is a direct cross-platform port of the original 32-bit DOS source code.
 
 ## Features
+...
+## License
+
+This project is licensed under the **MIT License**. This applies to the modern port and any new modifications. The original AESOP/32 definitions and documentation were released into the public domain by John Miles.
+
+See the `LICENSE` file for the full license text.
 
 - **Bytecode Disassembly:** Full disassembly of AESOP engine bytecode using a configurable instruction set definition.
 - **Resource Extraction:** Extract individual or all resources from `.RES` containers.
