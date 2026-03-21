@@ -60,6 +60,12 @@ Since the tool requires `bytecode.def` to be present in the same directory as th
 ```bash
 make package
 ```
+
+To create a versioned tarball for distribution:
+
+```bash
+make release
+```
 This will create a `dist/` directory containing both the `daesop` binary and the required `bytecode.def` file.
 
 ## Usage

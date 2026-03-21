@@ -478,7 +478,7 @@ void displayDictionary(char *aText, char *aHeader, char *aFormat,
 	for (i = 0; i < MAX_NUMBER_OF_DICTIONARY_ITEMS && aDictionary[i] != NULL;
 		 i++)
 	{
-		char loTmp[256];
+		char loTmp[512];
 		if (aSecondIsDecimalNumber == true)
 		{
 			if (strchr(aDictionary[i]->second, ',') != NULL)
@@ -701,7 +701,7 @@ IMPORTENTRYPOINTER *getFullImportArray(DICTENTRYPOINTER *aRawImportArray,
 			// imported variable (simple or array - we cannot distinguis it yet)
 			int loImportedVariableNumber;
 			int loOriginalResourceNumber;
-			char loTmp[256];
+			char loTmp[512];
 			int loNumberLength;
 
 			if (loType == 'B')
@@ -961,7 +961,7 @@ EXPORTENTRYPOINTER *getFullExportArray(DICTENTRYPOINTER *aRawExportArray,
 			int loExportedArrayPosition;
 			int loExportedArraySizeInElements;
 			int loNumberLength;
-			char loTmp[256];
+			char loTmp[512];
 
 			if (loType == 'B')
 			{
@@ -1051,8 +1051,8 @@ void displayImportDictionary(char *aImportResourceName,
 		int loCurrentlyDisplayedType;
 		char loFirst[256];
 		char loSecond[256];
-		char loTmp[256];
-		char loTmp2[256];
+		char loTmp[512];
+		char loTmp2[512];
 
 		loCurrentImportEntry = aFullImportResourceDictionary[i];
 		loCurrentImportEntryType = loCurrentImportEntry->importType;
@@ -1168,7 +1168,7 @@ void displayExportDictionary(char *aExportResourceName,
 		int loCurrentlyDisplayedType;
 		char loFirst[256];
 		char loSecond[256];
-		char loTmp[256];
+		char loTmp[512];
 
 		loCurrentExportEntry = aFullExportResourceDictionary[i];
 		loCurrentExportEntryType = loCurrentExportEntry->exportType;

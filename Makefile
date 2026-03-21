@@ -7,6 +7,7 @@ BIN_DIR = bin
 DATA_DIR = data
 DIST_DIR = dist
 
+# Extract version from config.h
 VERSION = $(shell grep 'DAESOP_VERSION "' $(SRC_DIR)/config.h | cut -d'"' -f2)
 PACKAGE_NAME = daesop-$(VERSION)
 
@@ -14,7 +15,7 @@ SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 TARGET = daesop
 
-.PHONY: all build clean package dist
+.PHONY: all build clean package release
 
 all: build
 
@@ -33,7 +34,7 @@ package: build | $(DIST_DIR)
 	cp $(BIN_DIR)/$(TARGET) $(DIST_DIR)/
 	cp $(DATA_DIR)/bytecode.def $(DIST_DIR)/
 
-dist: build | $(DIST_DIR)
+release: build | $(DIST_DIR)
 	rm -rf $(DIST_DIR)/$(PACKAGE_NAME)
 	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
 	cp $(BIN_DIR)/$(TARGET) $(DIST_DIR)/$(PACKAGE_NAME)/

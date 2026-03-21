@@ -1057,7 +1057,7 @@ void getDBByteString(char *aResult, unsigned char *aResource, int aLength,
 					 int aAddress)
 {
 	char loResultLine[256];
-	char loTmp[256];
+	char loTmp[512];
 	char loHexaCodes[256];
 	unsigned char loValue;
 
@@ -1088,7 +1088,7 @@ void getDWWordString(char *aResult, unsigned char *aResource, int aLength,
 					 int aAddress)
 {
 	char loResultLine[256];
-	char loTmp[256];
+	char loTmp[512];
 	char loHexaCodes[256];
 	unsigned char loValue;
 
@@ -1119,7 +1119,7 @@ void getDLLongString(char *aResult, unsigned char *aResource, int aLength,
 					 int aAddress)
 {
 	char loResultLine[256];
-	char loTmp[256];
+	char loTmp[512];
 	char loHexaCodes[256];
 	unsigned char loValue;
 
@@ -1158,7 +1158,7 @@ int writeOneInstruction(unsigned char *aResource, int aLength,
 	char loInstruction[256];
 	char loHexaCodes[256];
 	char loResultLine[256];
-	char loTmp[256];
+	char loTmp[512];
 	int loCurrentInstruction;
 
 	loInstructionStartAddress = *loCurrentAddress;
@@ -1478,7 +1478,7 @@ int writeOneInstruction(unsigned char *aResource, int aLength,
 void getHexCodes(char *aString, unsigned char *aResource, int aBufferLength,
 				 int aStartAddress, int aSize)
 {
-	char loTmp[256];
+	char loTmp[512];
 	int i;
 	if (aStartAddress + aSize > aBufferLength)
 	{
@@ -1510,7 +1510,7 @@ void writeCaseHeader(unsigned char *aResource, int aLength, int aStartAddress,
 					 long aCaseOptions, FILE *aOutputFile)
 {
 	char loHexCodes[256];
-	char loTmp[256];
+	char loTmp[512];
 	char loInstruction[256];
 	char loResultLine[256];
 	if (hasAddressLabel(aStartAddress) == true)
@@ -1538,7 +1538,7 @@ void writeCaseEntry(unsigned char *aResource, int aLength, int aStartAddress,
 					long aValue, int aTarget, FILE *aOutputFile)
 {
 	char loHexCodes[256];
-	char loTmp[256];
+	char loTmp[512];
 	char loInstruction[256];
 	char loResultLine[256];
 	// hex codes
@@ -1562,7 +1562,7 @@ void writeCaseDefault(unsigned char *aResource, int aLength, int aStartAddress,
 					  int aTarget, FILE *aOutputFile)
 {
 	char loHexCodes[256];
-	char loTmp[256];
+	char loTmp[512];
 	char loInstruction[256];
 	char loResultLine[256];
 	// hex codes
@@ -1593,7 +1593,7 @@ int getParameterString(char *aString, unsigned char aParameterType,
 					   long aParameterValue, int aAddParameterComment,
 					   int aAddCharactersInTheComment)
 {
-	char loTmp[256];
+	char loTmp[512];
 	int loSize;
 	if (aParameterType == 'b')
 	{
@@ -1623,7 +1623,7 @@ int getParameterString(char *aString, unsigned char aParameterType,
 	if (aAddParameterComment == true)
 	{
 		// ok, add a comment
-		char loTmp[256];
+		char loTmp[512];
 		int i;
 		unsigned char loArray[4];
 		int loPrintableCharacters = true;
