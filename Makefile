@@ -4,15 +4,17 @@ CFLAGS = -Wall -Wextra -std=c17 -Isrc
 SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
+DATA_DIR = data
 DIST_DIR = dist
+
+VERSION = $(shell grep 'DAESOP_VERSION "' $(SRC_DIR)/config.h | cut -d'"' -f2)
+PACKAGE_NAME = daesop-$(VERSION)
 
 SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 TARGET = daesop
 
-DATA_DIR = data
-
-.PHONY: all build clean package
+.PHONY: all build clean package dist
 
 all: build
 
@@ -30,6 +32,15 @@ $(BIN_DIR) $(OBJ_DIR) $(DIST_DIR):
 package: build | $(DIST_DIR)
 	cp $(BIN_DIR)/$(TARGET) $(DIST_DIR)/
 	cp $(DATA_DIR)/bytecode.def $(DIST_DIR)/
+
+dist: build | $(DIST_DIR)
+	rm -rf $(DIST_DIR)/$(PACKAGE_NAME)
+	mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
+	cp $(BIN_DIR)/$(TARGET) $(DIST_DIR)/$(PACKAGE_NAME)/
+	cp $(DATA_DIR)/bytecode.def $(DIST_DIR)/$(PACKAGE_NAME)/
+	tar -czf $(DIST_DIR)/$(PACKAGE_NAME).tar.gz -C $(DIST_DIR) $(PACKAGE_NAME)
+	rm -rf $(DIST_DIR)/$(PACKAGE_NAME)
+	@echo "Created $(DIST_DIR)/$(PACKAGE_NAME).tar.gz"
 
 clean:
 	rm -rf $(OBJ_DIR)
