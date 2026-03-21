@@ -273,6 +273,7 @@ int replace_resource_in_opened_file(char *aResourceName, int aResourceNumber,
 	long loDirBlockStart;
 	unsigned int loDirBlockSize;
 	DIRPOINTER loModifiedDirectoryBlock;
+	(void)aResourceName;
 
 	fseek(aNewFile, 0, SEEK_END); // to the end of the new file
 	loNewFileOriginalLength = ftell(aNewFile);
@@ -874,6 +875,9 @@ int process_old_subpicture_fill_sequence(int aOldX, int aOldY,
 										 int aNewBitmapBufferLength, int *aNewBitmapBufferPointer,
 										 int *aFuturePositionX, int *aFuturePositionY)
 {
+	(void)aOldResourceBuffer;
+	(void)aOldResourceBufferLength;
+
 #ifdef BITMAP_CONVERSION_DEBUG
 	printf("          Fill sequence, length %d, value %d\n", aAmount, (int)aValue);
 	printf("            going to generate skip sequences before run...\n");
@@ -1332,6 +1336,7 @@ int read_old_character_definition(unsigned char **aResult, int aStartPos,
 	unsigned int loPointer;
 	int loColumns;
 	int loOldCharacterDefinitionSizeInBytes;
+	(void)aStartPos;
 
 	loPointerAddress = 0x108 + aChar * 2;
 

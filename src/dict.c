@@ -623,6 +623,8 @@ IMPORTENTRYPOINTER *getFullImportArray(DICTENTRYPOINTER *aRawImportArray,
 	int loImportArraySizeInBytes;
 	int loAllocatedImportEntries;
 	int i;
+	(void)aResFile;
+	(void)aDirectoryPointers;
 
 	printf("Conversion of the raw import array started ...\n");
 	if (aRawImportArray == NULL)

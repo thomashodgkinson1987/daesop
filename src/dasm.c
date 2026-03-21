@@ -748,6 +748,7 @@ int endsDisassembly(unsigned char *aResource, int aLength,
 					int aCurrentAddress)
 {
 	int loInstruction;
+	(void)aLength;
 
 	loInstruction = (unsigned char)(aResource[aCurrentAddress]);
 	if (loInstruction > MAX_BYTECODES || bytecodeTable[loInstruction] == NULL)

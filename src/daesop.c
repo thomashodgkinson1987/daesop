@@ -1158,7 +1158,7 @@ int test_old_bitmaps(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 			loNumber = loResourcesInfoTable[i]->number;
 			loFileName = loResourcesInfoTable[i]->infoFromResource2;
 			if (test_one_old_bitmap(aResFile, aDirectoryPointers, loName, loNumber,
-								 loOutputFile) == false)
+									loOutputFile) == false)
 			{
 				fprintf(loOutputFile, "%-6s %5d \"%s\" \"%s\"\n\n", "FAILED",
 						loNumber, loName, loFileName);
@@ -1248,8 +1248,8 @@ int replace_resource_by_resource_from_file(FILE *aResFile,
 	fclose(loAddedResourceFile);
 
 	loResult = replace_resource_by_resource_from_memory(aResFile, loResourceName,
-												   loResourceNumber, loBuffer, loAddedResourceSize, aNewFileName,
-												   aNewResourceHasHeader);
+														loResourceNumber, loBuffer, loAddedResourceSize, aNewFileName,
+														aNewResourceHasHeader);
 	free(loBuffer);
 	return (loResult);
 }
@@ -1452,6 +1452,7 @@ int create_tbl_file(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 {
 	int i;
 	FILE *loOutputFile;
+	(void)aResFile;
 
 	// open the binary file
 	printf("Creating the output TBL file: %s\n", aTblFileName);
@@ -1556,7 +1557,7 @@ int convert_old_bitmaps(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 			loName = loResourcesInfoTable[i]->name;
 			loNumber = loResourcesInfoTable[i]->number;
 			if (convert_one_old_bitmap(loNewFile, loNewFileDirectoryPointers,
-									&loNewFileHeader, loNumber, loName) == false)
+									   &loNewFileHeader, loNumber, loName) == false)
 			{
 				loFailedConversions++;
 				printf(
@@ -1652,7 +1653,7 @@ int convert_old_fonts(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 			loName = loResourcesInfoTable[i]->name;
 			loNumber = loResourcesInfoTable[i]->number;
 			if (convert_one_old_font(loNewFile, loNewFileDirectoryPointers,
-								  &loNewFileHeader, loNumber, loName) == false)
+									 &loNewFileHeader, loNumber, loName) == false)
 			{
 				loFailedConversions++;
 				printf(
@@ -1730,7 +1731,7 @@ int patch_eob3_menu(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 	}
 
 	if (patch_eob3_menu_in_opened_file(loNewFile, loNewFileDirectoryPointers,
-								  &loNewFileHeader) == false)
+									   &loNewFileHeader) == false)
 	{
 		printf("Patching of the menu resource failed!\n");
 		// mark the file as invalid (by overwriting the beginning)
@@ -1800,7 +1801,7 @@ int convert_eob3_to_aesop32(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 
 	// patch the menu resource
 	if (patch_eob3_menu_in_opened_file(loNewFile, loNewFileDirectoryPointers,
-								  &loNewFileHeader) == false)
+									   &loNewFileHeader) == false)
 	{
 		printf("Patching of the menu resource failed!\n");
 		// mark the file as invalid (by overwriting the beginning)
@@ -1825,7 +1826,7 @@ int convert_eob3_to_aesop32(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 		if (loResourceType == RESOURCE_TYPE_BITMAP)
 		{
 			if (convert_one_old_bitmap(loNewFile, loNewFileDirectoryPointers,
-									&loNewFileHeader, loNumber, loName) == false)
+									   &loNewFileHeader, loNumber, loName) == false)
 			{
 				printf(
 					"The conversion of the bitmap resource number %d, name \"%s\" FAILED!\n",
@@ -1846,7 +1847,7 @@ int convert_eob3_to_aesop32(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 		else if (loResourceType == RESOURCE_TYPE_FONT)
 		{
 			if (convert_one_old_font(loNewFile, loNewFileDirectoryPointers,
-								  &loNewFileHeader, loNumber, loName) == false)
+									 &loNewFileHeader, loNumber, loName) == false)
 			{
 				printf(
 					"The conversion of the font resource number %d, name \"%s\" FAILED!\n",
@@ -1899,7 +1900,7 @@ int extract_all_resources(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 	FILE *loOutputFile;
 	char loFullFileName[1024];
 	char loResourceName[256];
-	char loResourcePath[256];
+	// char loResourcePath[256];
 	int loExtractedCount = 0;
 	int loSkippedCount = 0;
 
