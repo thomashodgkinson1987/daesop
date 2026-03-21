@@ -1,5 +1,3 @@
-#include "daesop.h"
-
 #include <stdbool.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -7,6 +5,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "daesop.h"
 #include "config.h"
 #include "convert.h"
 #include "dasm.h"
