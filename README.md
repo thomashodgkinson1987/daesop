@@ -18,18 +18,18 @@ This project modernises the `daesop` utility, which has a long history in the re
 The current version of this tool is a direct cross-platform port of the original 32-bit DOS source code.
 
 ## Features
-...
-## License
-
-This project is licensed under the **MIT License**. This applies to the modern port and any new modifications. The original AESOP/32 definitions and documentation were released into the public domain by John Miles.
-
-See the `LICENSE` file for the full license text.
 
 - **Bytecode Disassembly:** Full disassembly of AESOP engine bytecode using a configurable instruction set definition.
 - **Resource Extraction:** Extract individual or all resources from `.RES` containers.
 - **Legacy Conversions:** Specialised support for converting "EOB 3 style" bitmaps and fonts.
 - **Resource Management:** Inspect, replace, or patch resources within existing engine files.
 - **AESOP/32 Compatibility:** Includes patches to help migrate resources to work with AESOP/32.
+
+## License
+
+This project is licensed under the **MIT License**. This applies to the modern port and any new modifications. The original AESOP/32 definitions and documentation were released into the public domain by John Miles.
+
+See the `LICENSE` file for the full license text.
 
 ## Project Structure
 
