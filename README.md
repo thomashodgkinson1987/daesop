@@ -4,7 +4,7 @@
 >
 > **AI Contribution:** This `README.md` was AI-generated. AI has been an instrumental partner in the modernisation, refactoring, and documentation of this project.
 
-`daesop` is a specialised decompiler and resource manipulation tool designed for the AESOP engine, famously used in retro titles such as *Eye of the Beholder 3* and *Dungeon Hack*. It provides a suite of tools for reverse engineering `.RES` files, disassembling bytecode, and converting legacy assets.
+`daesop` (De-AESOP) is a specialised decompiler and resource manipulation tool designed for the AESOP engine, famously used in retro titles such as *Eye of the Beholder III: Assault on Myth Drannor* (`EYE.RES`) and *Dungeon Hack* (`HACK.RES`, `OPEN.RES`). It provides a suite of tools for reverse engineering `.RES` files, disassembling bytecode, and converting legacy assets.
 
 ## History & Credits
 
@@ -15,7 +15,13 @@ This project modernises the `daesop` utility, which has a long history in the re
 - **mirekluza**: The original author of the `daesop` utility and the driving force behind the [AESOP/32 modernisation project on VOGONS](https://www.vogons.org/viewtopic.php?t=20601).
 - **Bret Curtis ([psi29a](https://github.com/psi29a))**: For his work on the [thirdeye](https://github.com/psi29a/thirdeye/) project, which served as a valuable reference for modernising AESOP tools.
 
-The current version of this tool is a direct cross-platform port of the original 32-bit DOS source code.
+The current version of this tool is a direct cross-platform port of the original 32-bit DOS source code. It is maintained as a standalone repository; the wider ecosystem around it includes the [thirdeye](https://github.com/psi29a/thirdeye/) engine reimplementation, a from-scratch C++ AESOP engine that runs these classic SSI titles natively on modern systems using the original game data.
+
+### References
+
+- [AESOP/16, AESOP/32 engine thread (VOGONS)](https://www.vogons.org/viewtopic.php?t=20601) — the community thread behind the AESOP/32 modernisation project
+- [AESOP engine discussion (ScummVM forums)](https://forums.scummvm.org/viewtopic.php?t=2397)
+- [psi29a/thirdeye](https://github.com/psi29a/thirdeye) — C++ AESOP engine reimplementation
 
 ## Features
 
