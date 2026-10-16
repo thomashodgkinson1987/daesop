@@ -9,28 +9,34 @@
 #include "dvar.h"
 
 #include "dasm.h"
+#include "bytecode_def.h"
 
 BYTECODEPOINTER *bytecodeTable = NULL;
 
 /*
- Read bytecode definition file
+ Read the embedded bytecode definition table
+ (generated at build time from data/bytecode.def, so no external
+ file is needed at runtime)
  */
 BYTECODEPOINTER *readBytecodeDefinition(void)
 {
-	FILE *loDefinitionFile;
-	char loDefinitionFilePath[256] = "";
-	char loLine[256];
+	char *loDefinitionCopy;
+	char *loLineStart;
+	char *loLineEnd;
 	int loBytecodeTableSize;
+	unsigned int i;
+	int loResult;
 
-	// strcpy(loDefinitionFilePath, myHomeDirectory); #TODO: set to local directory, and eventually check in other locations
-	strcat(loDefinitionFilePath, BYTECODE_DEFINITION_FILE);
-	loDefinitionFile = fopen(loDefinitionFilePath, "r");
-	if (loDefinitionFile == NULL)
+	// writable copy: the line parser tokenises in place
+	loDefinitionCopy = (char *)malloc(bytecode_def_len + 1);
+	if (loDefinitionCopy == NULL)
 	{
-		printf("The attempt to open the bytecode definion file %s failed!\n",
-			   loDefinitionFilePath);
+		printf("Failure to allocate %u bytes for the bytecode definition copy!",
+			   bytecode_def_len + 1);
 		return (NULL);
 	}
+	memcpy(loDefinitionCopy, bytecode_def, bytecode_def_len);
+	loDefinitionCopy[bytecode_def_len] = '\0';
 
 	// allocate the field
 	loBytecodeTableSize = MAX_BYTECODES * sizeof(BYTECODEPOINTER);
@@ -40,45 +46,57 @@ BYTECODEPOINTER *readBytecodeDefinition(void)
 		printf(
 			"Failure to allocate %d bytes for the bytecode definition table!",
 			loBytecodeTableSize);
-		fclose(loDefinitionFile);
+		free(loDefinitionCopy);
 		return (NULL);
 	}
 	// set everything to NULL
-	for (unsigned int i = 0; i < MAX_BYTECODES; i++)
+	for (i = 0; i < MAX_BYTECODES; i++)
 	{
 		bytecodeTable[i] = NULL;
 	}
-	// read the definition file
-	while (fgets(loLine, 256, loDefinitionFile) != NULL)
+	// split into lines exactly as fgets() would deliver them
+	// (trailing '\r' kept; the line parser handles it)
+	loLineStart = loDefinitionCopy;
+	while (*loLineStart != '\0')
 	{
-		unsigned int i;
-		int loResult;
-		// printf("%s", loLine);
-		//  find the first non-empty character
-		for (i = 0; i < strlen(loLine); i++)
+		loLineEnd = strchr(loLineStart, '\n');
+		if (loLineEnd != NULL)
 		{
-			if (loLine[i] != ' ' && loLine[i] != '\t')
+			*loLineEnd = '\0';
+		}
+		// find the first non-empty character
+		for (i = 0; loLineStart[i] != '\0'; i++)
+		{
+			if (loLineStart[i] != ' ' && loLineStart[i] != '\t')
 			{
 				break;
 			}
 		}
-		if (i == strlen(loLine) || loLine[i] == ';')
+		if (loLineStart[i] == '\0' || loLineStart[i] == ';')
 		{
 			// comment or an empty line, ignore
-			continue;
 		}
-		loResult = processBytecodeDefinitionLine(loLine);
-		if (loResult == false)
+		else
 		{
-			printf(
-				"The analysis of the following line in the bytecode definition file failed:\n  %s\n",
-				loLine);
-			free(bytecodeTable); // well, this does not free everything, there can be some items already
-			fclose(loDefinitionFile);
-			bytecodeTable = NULL;
-			return (NULL);
+			loResult = processBytecodeDefinitionLine(loLineStart);
+			if (loResult == false)
+			{
+				printf(
+					"The analysis of the following line in the bytecode definition failed:\n  %s\n",
+					loLineStart);
+				free(bytecodeTable); // well, this does not free everything, there can be some items already
+				free(loDefinitionCopy);
+				bytecodeTable = NULL;
+				return (NULL);
+			}
 		}
+		if (loLineEnd == NULL)
+		{
+			break;
+		}
+		loLineStart = loLineEnd + 1;
 	}
+	free(loDefinitionCopy);
 	return (bytecodeTable);
 }
 

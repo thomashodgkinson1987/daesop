@@ -61,7 +61,9 @@ make build
 
 ### Packaging
 
-Since the tool requires `bytecode.def` to be present in the same directory as the executable to function correctly, use the package target to create a ready-to-use distribution:
+The opcode table (`data/bytecode.def`) is embedded in the binary at
+build time, so the executable is self-contained — just copy it anywhere
+and run. Use the package target to create a ready-to-use distribution:
 
 ```bash
 make package
@@ -72,7 +74,8 @@ To create a versioned tarball for distribution:
 ```bash
 make release
 ```
-This will create a `dist/` directory containing both the `daesop` binary and the required `bytecode.def` file.
+This will create a `dist/` directory containing the self-contained `daesop` binary
+(the opcode table is embedded at build time).
 
 ## Usage
 

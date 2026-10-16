@@ -1574,6 +1574,102 @@ int patch_eob3_menu_in_opened_file(FILE *aNewFile,
 }
 
 /*
+ Patches the "main menu" hit regions in EYE.RES so the clickable rows
+ coincide with the drawn text cells (moves each region up by 4 pixels:
+ y 107+8*i..114+8*i -> 103+8*i..110+8*i, and the M:4 index formula
+ (y0-107)/8 -> (y0-103)/8). Only the copy is modified.
+ */
+int patch_eob3_menu_alignment_in_opened_file(FILE *aNewFile,
+											 DIRPOINTER *aNewFileDirectoryPointers,
+											 struct RESGlobalHeader *aNewFileHeader)
+{
+	int loResourceNumber = 1322;
+	char loResourceName[] = "main menu";
+	char loFoundResourceName[256];
+	unsigned char *loResourceBuffer;
+	int loFoundResourceLength;
+
+	printf("Patching the resource number %d, name \"%s\" ...\n",
+		   loResourceNumber, loResourceName);
+
+	if (getResourceName(loFoundResourceName, 1322) == NULL)
+	{
+		printf("The resource number %d (%s)was not found!\n", loResourceNumber,
+			   loResourceName);
+		return (false);
+	}
+
+	if (strcmp(loResourceName, loFoundResourceName) != 0)
+	{
+		printf(
+			"The resource number %d has name %s (the program expected %s)!\n",
+			loResourceNumber, loFoundResourceName, loResourceName);
+		return (false);
+	}
+
+	loResourceBuffer = readResourceBinary(loResourceNumber, aNewFile,
+										  aNewFileDirectoryPointers, &loFoundResourceLength);
+	if (loResourceBuffer == NULL)
+	{
+		printf("Failed to read the resource number %d!\n", loResourceNumber);
+		return (false);
+	}
+
+	if (loFoundResourceLength != 1181)
+	{
+		printf(
+			"The resource number %d has length %d (the program expected 1181)!\n",
+			loResourceNumber, loFoundResourceLength);
+		free(loResourceBuffer);
+		return (false);
+	}
+
+	/* patch (addr. inside the resource, old, new)
+	 M:4 "mouse illuminates choice" index formula (y0-107)/8 -> (y0-103)/8
+	 000001d8: 6b 67
+	 M:0 "create" region loop top 107+8*i -> 103+8*i
+	 00000353: 6b 67
+	 M:0 "create" region loop bottom 114+8*i -> 110+8*i
+	 00000362: 72 6e
+	 */
+
+	if (patch_one_byte(loResourceBuffer, loFoundResourceLength, 0x1d8, 0x6b, 0x67) == false)
+	{
+		free(loResourceBuffer);
+		return (false);
+	}
+
+	if (patch_one_byte(loResourceBuffer, loFoundResourceLength, 0x353, 0x6b, 0x67) == false)
+	{
+		free(loResourceBuffer);
+		return (false);
+	}
+
+	if (patch_one_byte(loResourceBuffer, loFoundResourceLength, 0x362, 0x72, 0x6e) == false)
+	{
+		free(loResourceBuffer);
+		return (false);
+	}
+
+	// replace the old resource by a new one
+	if (replace_resource_in_opened_file(loResourceName, loResourceNumber,
+										loResourceBuffer, loFoundResourceLength, aNewFile, aNewFileHeader,
+										aNewFileDirectoryPointers, false) == false)
+	{
+		printf(
+			"Failed to replace the old resource %s by a new one (resource number %d)!\n",
+			loResourceName, loResourceNumber);
+		free(loResourceBuffer);
+		return (false);
+	}
+	else
+	{
+		free(loResourceBuffer);
+		return (true);
+	}
+}
+
+/*
  Patch one byte in the provided binary
  */
 int patch_one_byte(unsigned char *aBinary, int aBinaryLength, int aAddress,

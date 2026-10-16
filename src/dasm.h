@@ -4,7 +4,6 @@
 #include "dict.h"
 
 #define MAX_BYTECODES 256
-#define BYTECODE_DEFINITION_FILE "bytecode.def"
 #define MAX_TOKENS 20
 #define PARAMETERS_HANDLED_BY_CODE 99
 

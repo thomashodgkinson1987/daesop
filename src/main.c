@@ -133,6 +133,11 @@ int main(int argc, char *argv[])
 		function = PATCH_EOB3_MENU;
 		number_of_required_parameters = 1;
 	}
+	else if (strcmp(function_option, "-eob3menualign") == 0)
+	{
+		function = PATCH_EOB3_MENU_ALIGNMENT;
+		number_of_required_parameters = 1;
+	}
 	else if (strcmp(function_option, "-eob3conv") == 0)
 	{
 		function = CONVERT_EOB3_TO_AESOP32;
@@ -245,6 +250,11 @@ int main(int argc, char *argv[])
 		// patch EOB 3 menu code
 		result = patch_eob3_menu(res_file, directory_pointers, argv[3]);
 	}
+	else if (function == PATCH_EOB3_MENU_ALIGNMENT)
+	{
+		// align EOB 3 main menu hit regions with the drawn text cells
+		result = patch_eob3_menu_alignment(res_file, directory_pointers, argv[3]);
+	}
 	else if (function == CONVERT_EOB3_TO_AESOP32)
 	{
 		// convert EOB 3
@@ -302,6 +312,7 @@ void syntax_information(void)
 	printf("  -cof           : converts all 'EOB 3 like' fonts in <res_file>\n");
 	printf("  -cofi          : same as above, but ignores errors\n");
 	printf("  -eob3menupatch : patches the <res_file> to work with AESOP/32\n");
+	printf("  -eob3menualign : aligns EOB 3 main menu hit regions with the text\n");
 	printf("  -eob3conv      : same as using commands /cob, /cof and /eob3menupatch\n");
 	printf("  -extract       : extracts all resources to the <output_directory>\n");
 	printf("\n");
@@ -1736,6 +1747,68 @@ int patch_eob3_menu(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
 		// mark the file as invalid (by overwriting the beginning)
 		fseek(loNewFile, 0, SEEK_SET);
 		fprintf(loNewFile, "BAD FILE: THE MENU RESOURCE PATCHING FAILED !!!\n");
+		loResult = false;
+	}
+	else
+	{
+		loResult = true;
+	}
+
+	fclose(loNewFile);
+	return (loResult);
+}
+
+/*
+ Aligns the EOB 3 main menu hit regions with the drawn text cells
+ (moves each clickable row up by 4 pixels so the visual menu centres
+ select the right item)
+ */
+int patch_eob3_menu_alignment(FILE *aResFile, DIRPOINTER *aDirectoryPointers,
+							  char *aNewFileName)
+{
+	int loResult = false;
+	DIRPOINTER loNewFileDirectoryPointers[MAX_DIRECTORIES];
+	struct RESGlobalHeader loNewFileHeader;
+	FILE *loNewFile;
+
+	// read the resource name array (it is used later)
+	if (get_resource_name_array(aResFile, aDirectoryPointers) == NULL)
+	{
+		return (false);
+	}
+
+	// copy the original file
+	// (only the copy will be modified)
+	if (copyFile(aResFile, aNewFileName) == false)
+	{
+		printf("Copying of the original file failed!\n");
+		return (loResult);
+	}
+
+	// open the copied file and read the header
+	loNewFile = open_aesop_resource_and_set_to_first_directory_block(aNewFileName,
+																	 "r+b", &loNewFileHeader);
+	if (loNewFile == NULL)
+	{
+		printf("The file could not be opened: %s!\n", aNewFileName);
+		return (loResult);
+	}
+
+	// read the directory
+	if (read_directory_blocks(loNewFile, loNewFileDirectoryPointers) == false)
+	{
+		printf("The reading of directory blocks in the new file failed!\n");
+		fclose(loNewFile);
+		return (loResult);
+	}
+
+	if (patch_eob3_menu_alignment_in_opened_file(loNewFile, loNewFileDirectoryPointers,
+												 &loNewFileHeader) == false)
+	{
+		printf("Patching of the main menu hit regions failed!\n");
+		// mark the file as invalid (by overwriting the beginning)
+		fseek(loNewFile, 0, SEEK_SET);
+		fprintf(loNewFile, "BAD FILE: THE MENU ALIGNMENT PATCHING FAILED !!!\n");
 		loResult = false;
 	}
 	else

@@ -248,6 +248,11 @@ int patch_eob3_menu_in_opened_file(
 	DIRPOINTER *new_file_directory_pointers,
 	struct RESGlobalHeader *new_file_header);
 
+int patch_eob3_menu_alignment_in_opened_file(
+	FILE *new_file,
+	DIRPOINTER *new_file_directory_pointers,
+	struct RESGlobalHeader *new_file_header);
+
 int patch_one_byte(
 	unsigned char *binary,
 	int binary_length,

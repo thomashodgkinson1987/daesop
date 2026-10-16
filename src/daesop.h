@@ -25,6 +25,7 @@
 #define CONVERT_OLD_FONTS 16
 #define CONVERT_OLD_FONTS_IGNORE_ERRORS 17
 #define PATCH_EOB3_MENU 18
+#define PATCH_EOB3_MENU_ALIGNMENT 21
 #define CONVERT_EOB3_TO_AESOP32 19
 #define EXTRACT_ALL 20
 
@@ -134,6 +135,11 @@ int convert_old_fonts(
 	int ignore_errors);
 
 int patch_eob3_menu(
+	FILE *res_file,
+	DIRPOINTER *directory_pointers,
+	char *new_fileName);
+
+int patch_eob3_menu_alignment(
 	FILE *res_file,
 	DIRPOINTER *directory_pointers,
 	char *new_fileName);
